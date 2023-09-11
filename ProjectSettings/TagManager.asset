@@ -41,3 +41,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Tab
+    uniqueID: 2628360405
+    locked: 0
+  - name: TabinTab
+    uniqueID: 179218897
+    locked: 0
+  - name: TabComponent
+    uniqueID: 3047601133
+    locked: 0
+  - name: Card
+    uniqueID: 677198469
+    locked: 0
+  - name: AboveWindow
+    uniqueID: 933498711
+    locked: 0
