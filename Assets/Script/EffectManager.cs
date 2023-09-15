@@ -21,6 +21,8 @@ public class EffectManager : MonoBehaviour
         effectObjBox[num] = Instantiate(CardBox.transform.GetChild(num).gameObject);
         effectObjBox[num].transform.SetParent(this.transform);
         effectObjBox[num].transform.position = this.transform.GetChild(num).position;
+        enable[num] = 1;
+        cardBox.skill(num);
     }
 
 }

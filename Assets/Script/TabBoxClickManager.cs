@@ -6,6 +6,8 @@ public class TabBoxClickManager : MonoBehaviour
 {
     public GameObject objCitizenWindow, objShopWindow, objInvenWindow, objTechWindow, objEffectWindow;
     GameObject openTab;
+
+    EffectManager effectBox;
     string openTabName = "";
     // Start is called before the first frame update
     void Start()

@@ -18,6 +18,7 @@ public class SeasonManager : MonoBehaviour
     {
         season += Time.deltaTime/gamespeed*4;
         this.transform.position += new Vector3(Time.deltaTime/gamespeed*7,0,0);
+        this.transform.Rotate(0,0,-Time.deltaTime/gamespeed*360);
         if(season>4) {
             season = 0f;
             this.transform.position = new Vector3(-3.5f,this.transform.position.y,0);

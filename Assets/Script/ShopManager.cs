@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ShopManager : MonoBehaviour
 {
@@ -12,10 +13,11 @@ public class ShopManager : MonoBehaviour
     InvenManager invenBox;
     Resource resource;
 
-    int cardAmount = 5;
+    int cardAmount;
 
     int shop1 = -1, shop2 = -1, shop3 = -1;
     GameObject shop1obj, shop2obj, shop3obj;
+    TextMeshPro shop1Price, shop2Price, shop3Price;
 
     bool waitspring;
     // Start is called before the first frame update
@@ -26,6 +28,12 @@ public class ShopManager : MonoBehaviour
         resource = Resource.GetComponent<Resource>();
         effectBox = EffectManager.GetComponent<EffectManager>();
         invenBox = InvenManager.GetComponent<InvenManager>();
+
+        cardAmount = cardBox.price.Length;
+
+        shop1Price = this.transform.GetChild(5).gameObject.GetComponent<TextMeshPro>();
+        shop2Price = this.transform.GetChild(6).gameObject.GetComponent<TextMeshPro>();
+        shop3Price = this.transform.GetChild(7).gameObject.GetComponent<TextMeshPro>();
     }
 
     // Update is called once per frame
@@ -44,6 +52,7 @@ public class ShopManager : MonoBehaviour
                         if(BuyCard(shop1)) {
                             resource.money -= cardBox.price[shop1];
                             Destroy(shop1obj);
+                            shop1Price.text = "";
                             shop1 = -1;
                         }
                     }
@@ -53,6 +62,7 @@ public class ShopManager : MonoBehaviour
                         if(BuyCard(shop2)) {
                             resource.money -= cardBox.price[shop2];
                             Destroy(shop2obj);
+                            shop2Price.text = "";
                             shop2 = -1;
                         }
                     }
@@ -62,6 +72,7 @@ public class ShopManager : MonoBehaviour
                         if(BuyCard(shop3)) {
                             resource.money -= cardBox.price[shop3];
                             Destroy(shop3obj);
+                            shop3Price.text = "";
                             shop3 = -1;
                         }
                     }
@@ -108,6 +119,10 @@ public class ShopManager : MonoBehaviour
         shop3obj = Instantiate(CardBox.transform.GetChild(shop3).gameObject);
         shop3obj.transform.SetParent(this.transform);
         shop3obj.transform.position = this.transform.GetChild(3).position;
+
+        shop1Price.text = cardBox.price[shop1].ToString();
+        shop2Price.text = cardBox.price[shop2].ToString();
+        shop3Price.text = cardBox.price[shop3].ToString();
     }
     bool BuyCard(int num)
     {

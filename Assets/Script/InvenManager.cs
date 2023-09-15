@@ -6,7 +6,9 @@ public class InvenManager : MonoBehaviour
 {
     public GameObject CardBox;
     public GameObject RevelWindow; 
+    public GameObject EffectWindow;
     RevelManager RevelBox;
+    EffectManager EffectBox;
 
     public int count = 0;
     public List<int> invenNumBox = new List<int>();
@@ -21,6 +23,7 @@ public class InvenManager : MonoBehaviour
     {
         invenSelectObj = this.transform.GetChild(7).gameObject;
         RevelBox = RevelWindow.GetComponent<RevelManager>();
+        EffectBox = EffectWindow.GetComponent<EffectManager>();
     }
     void Update()
     {
@@ -35,6 +38,10 @@ public class InvenManager : MonoBehaviour
                 if(click_obj.name == "RevelButton" && invenSelect != -1 && !RevelBox.reveling) {
                     Debug.Log($"RevelOpen : {invenSelect} {invenNumBox[invenSelect]}");
                     RevelWindow.SetActive(true);
+                    
+                    if(EffectBox.enable[3] != 1) RevelWindow.transform.GetChild(3).gameObject.SetActive(false); // megaphone check
+                    else RevelWindow.transform.GetChild(3).gameObject.SetActive(true); // megaphone check
+
                     RevelBox.reveling = true;
                     RevelBox.RevelOpen(invenSelect);
                     invenSelect = -1;
