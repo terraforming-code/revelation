@@ -31,7 +31,7 @@ public class MessageManager : MonoBehaviour
         TextMeshPro tempMessageText = tempMessageUI.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>();
         if(message.Count == 4) messageKill(3);
         tempMessageUI.transform.SetParent(this.transform);
-        tempMessageUI.transform.position = this.transform.position + new Vector3(0,-1f * message.Count,0);
+        tempMessageUI.transform.position = this.transform.position + new Vector3(0,-0.7f * message.Count,0);
         tempMessageText.text = context;
         message.Add(tempMessageUI);
         counter.Add(0f);
@@ -43,6 +43,6 @@ public class MessageManager : MonoBehaviour
         message.RemoveAt(num);
         counter.RemoveAt(num);
         for(int i = num; i < message.Count; i++)
-            message[i].transform.position = new Vector3(message[i].transform.position.x,message[i].transform.position.y+1f,0);
+            message[i].transform.position = new Vector3(message[i].transform.position.x,message[i].transform.position.y+0.7f,0);
     }
 }

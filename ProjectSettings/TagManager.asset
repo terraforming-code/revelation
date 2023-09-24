@@ -41,6 +41,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: BG
+    uniqueID: 384355243
+    locked: 0
+  - name: BGComponent
+    uniqueID: 261553997
+    locked: 0
   - name: Tab
     uniqueID: 2628360405
     locked: 0
