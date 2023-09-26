@@ -5,7 +5,8 @@ using TMPro;
 
 public class Resource : MonoBehaviour
 {
-    public GameObject seasonManager, citizenManager, messageManager, enemyManager;
+    public GameObject seasonManager, citizenManager, messageManager, enemyManager, buildManager;
+    BuildingManager buildBox;
     SeasonManager seasonBox;
     Saram saram;
     CitizenManager citizenBox;
@@ -14,15 +15,19 @@ public class Resource : MonoBehaviour
 
     TextMeshPro moneyText, foodText, powerText, grainText;
     public int money = 30;
-    public float food = 1f, power = 1f, love = 0f, grain = 0f, defense = 1f;
+    public float food = 1f, power = 1f, love = 0f, grain = 0f, defense = 1f, farmTech = 1f, fightTech = 1f;
     public float happy = 0.9f;
 
     public float moretax = 1f;
 
     int seasonEat = 0;
+    float foodLimit = 500f;
     bool waitNewSeason = true;
+    
+    public bool poongzak = false;
     void Start()
     {
+        buildBox = buildManager.GetComponent<BuildingManager>();
         seasonBox = seasonManager.GetComponent<SeasonManager>();
         citizenBox = citizenManager.GetComponent<CitizenManager>();
         enemyBox = enemyManager.GetComponent<EnemyManager>();
@@ -37,7 +42,8 @@ public class Resource : MonoBehaviour
     void Update()
     {
         moneyText.text = money.ToString();
-        foodText.text = ((int)food).ToString();
+        if(food > foodLimit && buildBox.build[4]!=1f) food = foodLimit; // FOOD LIMIT
+        foodText.text = ((int)food).ToString(); 
         powerText.text = ((int)power).ToString();
         grainText.text = ((int)grain).ToString();
         if((!waitNewSeason && seasonEat % 12 < seasonBox.season * 3) || (waitNewSeason && seasonBox.season < 0.33))
@@ -47,9 +53,10 @@ public class Resource : MonoBehaviour
             if(seasonEat % 12 == 6 || seasonEat % 12 == 0) {
                 float taxPercent = 0f;
                 if(saram.num[0] == 1) { // if priest exist
-                    if(saram.char2[0][0] == 2 || saram.char2[0][0] == 3) moretax *= 1.5f; // toxic holy priest
+                    if(saram.char2[0][0] == 5) moretax = 0f; // anarchist
+                    else if(saram.char2[0][0] == 2 || saram.char2[0][0] == 3) moretax *= 1.5f; // toxic holy priest
                     taxPercent = Mathf.Min(saram.holy[0][0]*moretax,1);
-                    moretax = 1f;                    
+                    moretax = 1f;
                 }
                 money += (int)(grain * taxPercent);
                 food += grain * (1 - taxPercent);
@@ -63,14 +70,14 @@ public class Resource : MonoBehaviour
                         goodCrop += saram.eating[i][j];
                     }
                 }
-                if(goodCrop*12>=grain*taxPercent) happy=Mathf.Min(1.2f,happy+0.1f);
+                if(goodCrop*12>=grain*taxPercent) {happy=Mathf.Min(1.2f,happy+0.1f); poongzak=true;}
                 grain = 0f;
             }
             else {
                 for(int i = 0; i<saram.num[1]; i++)
                 {
-                    if(seasonEat % 12 <= 6) grain += saram.farming[1][i] * happy;
-                    grain += saram.farming[1][i] / 2f * happy;
+                    if(seasonEat % 12 <= 6) grain += saram.farming[1][i] * happy * farmTech;
+                    grain += saram.farming[1][i] / 2f * happy * farmTech;
                 }
                 
             }
@@ -136,8 +143,8 @@ public class Resource : MonoBehaviour
                 }
             }
             //power process
-            if(saram.num[0] == 1) power = (saram.char3[0][0] == 3? 1.2f : 1)*tempPower * happy;
-            else power = tempPower * happy;
+            if(saram.num[0] == 1) power = (saram.char3[0][0] == 3? 1.2f : 1)*tempPower * happy * fightTech;
+            else power = tempPower * happy * fightTech;
 
 
             //enemy fight process
@@ -156,13 +163,13 @@ public class Resource : MonoBehaviour
                     }
                     else if((saram.char3[0][0] == 0 || saram.char3[0][0] == 5) && enemyBox.fightDate == -1)
                     {
-                        // if(Random.Range(0,2) == 0) {enemyBox.fightDate = seasonEat; Debug.Log("Fight");}
-                        enemyBox.fightDate = seasonEat % 12; // for debugging
+                        if(Random.Range(0,2) == 0) {enemyBox.fightDate = seasonEat % 12; }
+                        //enemyBox.fightDate = seasonEat % 12; // for debugging
                     }
                     else if(enemyBox.fightDate == -1)
                     {
-                        //if(Random.Range(0,5) == 0) {enemyBox.fightDate = seasonEat; Debug.Log("Fight");}
-                        enemyBox.fightDate = seasonEat % 12; // for debugging
+                        if(Random.Range(0,5) == 0) {enemyBox.fightDate = seasonEat % 12; }
+                        //enemyBox.fightDate = seasonEat % 12; // for debugging
                     }
                 }
                 enemyBox.enemyObjRearrange();

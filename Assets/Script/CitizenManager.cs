@@ -6,7 +6,8 @@ using TMPro;
 public class CitizenManager : MonoBehaviour
 {
     public GameObject Resource, messageManager;
-    public GameObject seasonManager;
+    public GameObject seasonManager, buildManager;
+    BuildingManager buildBox;
     SeasonManager seasonBox;
     Resource resource;
     Saram saram;
@@ -16,7 +17,7 @@ public class CitizenManager : MonoBehaviour
     public int tabNum = 1;
     public int[] citizenPivot = new int[]{0,0,0};
 
-
+    public int diedCitizenNum = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +28,7 @@ public class CitizenManager : MonoBehaviour
         saram = Resource.GetComponent<Saram>();
         seasonBox = seasonManager.GetComponent<SeasonManager>();
         messageBox = messageManager.GetComponent<MessageManager>();
+        buildBox = buildManager.GetComponent<BuildingManager>();
         
         // Add proto DB
         for(int i = 0; i<5; i++)
@@ -136,7 +138,6 @@ public class CitizenManager : MonoBehaviour
 
 
         saram.num[job]++;
-        Debug.Log($"{saram.nickname[job][saram.nickname[job].Count-1]} Holy: {saram.holy[job][saram.holy[job].Count-1]}");
 
         messageBox.messageAdd("New Live : "+new_nickname);
 
@@ -183,8 +184,15 @@ public class CitizenManager : MonoBehaviour
             case -1 : // didn't die
                 break;
         }
-        if(job == 0) {saram.HolyAdd(-0.15f); citizenRearrange();}
-        if(job != -1) {resource.happy = Mathf.Max(resource.happy-0.025f,0.8f);}
+        if(job == 0) {
+            saram.HolyAdd(-0.15f);
+            citizenRearrange();
+        }
+        if(reason != -1) {
+            if(buildBox.build[5] == 1f) resource.happy = Mathf.Max(resource.happy-0.0125f,0.8f);
+            else resource.happy = Mathf.Max(resource.happy-0.05f,0.8f);
+            diedCitizenNum++;
+        }
         saram.nickname[job].RemoveAt( killpivot );
         saram.holy[job].RemoveAt( killpivot );
         saram.farming[job].RemoveAt( killpivot );

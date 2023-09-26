@@ -5,7 +5,8 @@ using TMPro;
 
 public class RevelManager : MonoBehaviour
 {
-    public GameObject invenWindow, effectWindow, Resource, CardBox, messageManager;
+    public GameObject TechWindow, invenWindow, effectWindow, Resource, CardBox, messageManager;
+    TechManager techBox;
     InvenManager invenBox;
     EffectManager effectBox;
     Resource resource;
@@ -23,6 +24,7 @@ public class RevelManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        techBox = TechWindow.GetComponent<TechManager>();
         invenBox = invenWindow.GetComponent<InvenManager>();
         effectBox = effectWindow.GetComponent<EffectManager>();
         resource = Resource.GetComponent<Resource>();
@@ -47,22 +49,38 @@ public class RevelManager : MonoBehaviour
                 if(click_obj.name == "RevelMegaphone") {
                     resource.money--; // * megaphone price *
                     revelPercent = Mathf.Min(revelPercent+0.1f,1f); // *megaphone effect*
+                    revelPercentText.text = Mathf.Round(revelPercent*100).ToString()+"%   "+Mathf.Round(100-revelPercent*100).ToString()+"%";
                     MegaphoneButton.SetActive(false);
                 }
                 if(click_obj.name == "RevelConfirm") {
-                    if(Random.Range(0f,1f) <= revelPercent) // Successed
+                    if(invenBox.invenNumBox[pivot]>=100 && !techBox.techCondition(invenBox.invenNumBox[pivot]))
                     {
-                        cards.skill(invenBox.invenNumBox[pivot]);
-                        saram.HolyAdd(0.05f);
-                        messageBox.messageAdd("Revealed");
+                        messageBox.messageAdd("Insufficient Condition to reveal technology");
                     }
-                    else messageBox.messageAdd("Unrevealed");
+                    else {
+                        if(Random.Range(0f,1f) <= revelPercent) // Successed
+                        {
+                            cards.skill(invenBox.invenNumBox[pivot]);
+                            if(invenBox.invenNumBox[pivot]>=100) {
+                                techBox.techUnlock(invenBox.invenNumBox[pivot]);
+                            }
+                            saram.HolyAdd(0.05f);
+                            messageBox.messageAdd("Revealed");
+                        }
+                        else
+                        {
+                            if(invenBox.invenNumBox[pivot]>=100) {
+                                techBox.enable[invenBox.invenNumBox[pivot]-100] = 0;
+                            }
+                            messageBox.messageAdd("Unrevealed");
+                        }
 
-                    invenBox.invenNumBox.RemoveAt(pivot);
-                    invenBox.invenRearrange();
-                    reveling = false;
-                    if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
-                    this.gameObject.SetActive(false);
+                        invenBox.invenNumBox.RemoveAt(pivot);
+                        invenBox.invenRearrange();
+                        reveling = false;
+                        if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
+                        this.gameObject.SetActive(false);
+                    }
                 }
                 if(click_obj.name == "RevelCancel") {
                     reveling = false;

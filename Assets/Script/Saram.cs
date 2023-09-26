@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-[System.Serializable]
 public class Saram : MonoBehaviour
 {
     
@@ -14,7 +13,7 @@ public class Saram : MonoBehaviour
     public int[] num = new int[]{0,0,0};
     
     public List<List<string>> nickname = new List<List<string>>();
-    [SerializeField] public List<List<float>> holy = new List<List<float>>();
+    public List<List<float>> holy = new List<List<float>>();
     public List<List<float>> farming = new List<List<float>>();
     public List<List<float>> eating = new List<List<float>>();
     public List<List<float>> fighting = new List<List<float>>();
@@ -86,17 +85,17 @@ public class Saram : MonoBehaviour
                     holy[i][j] = Mathf.Min(holy[i][j]*1.5f,1);
                     break;
                 case 3 :
-                    holy[i][j] *= Mathf.Min(holy[i][j]*1.2f,1);
+                    holy[i][j] = Mathf.Min(holy[i][j]*1.2f,1);
                     break;
                 case 4 :
                     life[i][j] *= 1.5f;
                     break;
                 case 5 :
-                    holy[i][j] *= Mathf.Max(holy[i][j]*0.5f,0.1f);
+                    holy[i][j] = Mathf.Max(holy[i][j]*0.5f,0.1f);
                     break;
                 case 6 :
                     for(int k = 0;k < char1[i].Count-1;k++)
-                        holy[i][k] *= Mathf.Min(holy[i][k]*1.1f,1);
+                        holy[i][k] = Mathf.Min(holy[i][k]*1.1f,1);
                     break; // agape
 
             }

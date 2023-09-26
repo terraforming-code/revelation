@@ -5,7 +5,7 @@ using TMPro;
 
 public class EnemyManager : MonoBehaviour
 {
-    int enemyLife = 2;
+    public int enemyLife = 2;
     float newenemyPower = 1f, enemyPower = 2f;
     public int fightDate = -1;
     public GameObject Resource, citizenManager;
@@ -16,6 +16,8 @@ public class EnemyManager : MonoBehaviour
     public GameObject SeasonTab, SeasonBarBear;
     GameObject fightDateObj;
     TextMeshPro enemyLifeText, enemyPowerText;
+
+    public int fightCounter = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,12 +43,12 @@ public class EnemyManager : MonoBehaviour
         float realPower = (saram.num[0]==1? 1.0f : 0.8f) * resource.power;
         float cha;
         float enemyPowerPerMan = enemyPower/enemyLife;
-        Debug.Log($"we have {realPower} and bear have {enemyPower}");
+        fightCounter++;
         if(realPower >= enemyPower)
         {
             saram.HolyAdd(0.1f);
             resource.happy = Mathf.Min(resource.happy+0.1f,1.2f);
-            cha = enemyPower / 2 * resource.defense;
+            cha = enemyPower / 2 * resource.defense * (saram.num[0]==1? (saram.char3[0][0]==5? 2f : 1f) : 1f);
             while(saram.num[2] > 0)
             {
                 Debug.Log($"Died army left {cha}");
@@ -75,7 +77,7 @@ public class EnemyManager : MonoBehaviour
                 citizenBox.citizenKill(2,0,3);
                 cha --;
             }
-            cha = realPower / 2 * resource.defense;
+            cha = realPower / 2 * resource.defense * (saram.num[0]==1? (saram.char3[0][0]==5? 2f : 1f) : 1f);
             while(enemyLife > 0)
             {
                 Debug.Log($"Died enemy left {cha}");
