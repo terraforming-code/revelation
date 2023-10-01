@@ -5,7 +5,7 @@ using TMPro;
 
 public class EnemyManager : MonoBehaviour
 {
-    int enemyLife = 2;
+    public int enemyLife = 2;
     float newenemyPower = 1f, enemyPower = 2f;
     public int fightDate = -1;
     public GameObject Resource, citizenManager;
@@ -13,13 +13,16 @@ public class EnemyManager : MonoBehaviour
     Saram saram;
     CitizenManager citizenBox;
 
-    public GameObject SeasonTab, SeasonBarBear;
+    public GameObject SeasonTab, SeasonBarBear, hellManager;
+    HellManager hellBox;
     GameObject fightDateObj;
     TextMeshPro enemyLifeText, enemyPowerText;
+
+    public int fightCounter = 0;
     // Start is called before the first frame update
     void Start()
     {
-
+        hellBox = hellManager.GetComponent<HellManager>();
         resource = Resource.GetComponent<Resource>();
         saram = Resource.GetComponent<Saram>();
         citizenBox = citizenManager.GetComponent<CitizenManager>();
@@ -41,12 +44,12 @@ public class EnemyManager : MonoBehaviour
         float realPower = (saram.num[0]==1? 1.0f : 0.8f) * resource.power;
         float cha;
         float enemyPowerPerMan = enemyPower/enemyLife;
-        Debug.Log($"we have {realPower} and bear have {enemyPower}");
-        if(realPower >= enemyPower)
+        fightCounter++;
+        if(realPower >= enemyPower && !hellBox.bigLose)
         {
             saram.HolyAdd(0.1f);
             resource.happy = Mathf.Min(resource.happy+0.1f,1.2f);
-            cha = enemyPower / 2 * resource.defense;
+            cha = enemyPower / 2 * resource.defense * (saram.num[0]==1? (saram.char3[0][0]==5? 2f : 1f) : 1f);
             while(saram.num[2] > 0)
             {
                 Debug.Log($"Died army left {cha}");
@@ -67,7 +70,7 @@ public class EnemyManager : MonoBehaviour
         else
         {
             saram.HolyAdd(-0.1f);
-            cha = enemyPower;
+            cha = enemyPower * resource.defense * (saram.num[0]==1? (saram.char3[0][0]==5? 2f : 1f) : 1f) * (hellBox.bigLose? 2f : 1f);
             while(saram.num[2] > 0)
             {
                 Debug.Log($"Died army left {cha}");
@@ -75,7 +78,7 @@ public class EnemyManager : MonoBehaviour
                 citizenBox.citizenKill(2,0,3);
                 cha --;
             }
-            cha = realPower / 2 * resource.defense;
+            cha = realPower / 2 ;
             while(enemyLife > 0)
             {
                 Debug.Log($"Died enemy left {cha}");
@@ -85,6 +88,7 @@ public class EnemyManager : MonoBehaviour
                 cha --;
             }  
         }
+        
         citizenBox.citizenRearrange();
 
     }

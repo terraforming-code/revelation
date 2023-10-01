@@ -20,6 +20,7 @@ public class CardBox : MonoBehaviour
 
     public int[] price = new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24};
     public int[] type = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1}; // effect = 0, revel = 1, tech = 2
+    public int techStart = 75;
     void Start()
     {
         invenBox = objInvenWindow.GetComponent<InvenManager>();
@@ -91,6 +92,14 @@ public class CardBox : MonoBehaviour
         {
             enemyBox.fightDate = -1;
             enemyBox.enemyObjRearrange();
+        }
+        if(i == 100)
+        {
+
+        }
+        if(i == 101)
+        {
+            
         }
     }
 }

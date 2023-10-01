@@ -95,7 +95,7 @@ public class InvenManager : MonoBehaviour
     {
         for(int i = 0; i < invenLimit; i++)
         {
-            if(i < invenNumBox.Count) invenBlock[i].sprite = cardBox.transform.GetChild(invenNumBox[i]).gameObject.GetComponent<SpriteRenderer>().sprite;
+            if(i < invenNumBox.Count) invenBlock[i].sprite = cardBox.transform.GetChild(invenNumBox[i]%cardBox.techStart).gameObject.GetComponent<SpriteRenderer>().sprite;
             else invenBlock[i].sprite = null;
         }
     }

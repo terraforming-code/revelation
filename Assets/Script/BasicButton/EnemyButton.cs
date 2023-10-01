@@ -17,7 +17,7 @@ public class EnemyButton : MonoBehaviour
     {
         if(enemyWindowmoving) {
             EnemyInfoWindow.transform.position += new Vector3(enemyWindowopening * Time.deltaTime * 6,0,0);
-            if((EnemyInfoWindow.transform.position.x <= 4.3f && enemyWindowopening == -1) || (EnemyInfoWindow.transform.position.x >= 8.8f && enemyWindowopening == 1))
+            if((EnemyInfoWindow.transform.position.x <= 5f && enemyWindowopening == -1) || (EnemyInfoWindow.transform.position.x >= 8.6f && enemyWindowopening == 1))
                 enemyWindowmoving = false;
         }
     }
