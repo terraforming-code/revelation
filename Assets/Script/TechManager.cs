@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class TechManager : MonoBehaviour
 {
-    public GameObject Resource, EnemyManager, CitizenManager, CardBox, buildManager;
+    public GameObject Resource, EnemyManager, CitizenManager, CardBox, buildManager, mammothManager, hellManager;
+    HellManager hellBox;
+    MammothManager mammothBox;
     BuildingManager buildBox;
     Resource resource;
     Saram saram;
@@ -18,6 +20,8 @@ public class TechManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        hellBox = hellManager.GetComponent<HellManager>();
+        mammothBox = mammothManager.GetComponent<MammothManager>();
         buildBox = buildManager.GetComponent<BuildingManager>();
         resource = Resource.GetComponent<Resource>();
         saram = Resource.GetComponent<Saram>();
@@ -78,7 +82,7 @@ public class TechManager : MonoBehaviour
             case 0:
                 return (enemyBox.enemyLife >= 10);
             case 1:
-                return true;  // heavy rain experience
+                return hellBox.experienceFlood;
             case 2:
                 return (saram.num[0]+saram.num[1]+saram.num[2] >= 15); 
             case 3:
@@ -95,7 +99,7 @@ public class TechManager : MonoBehaviour
                         tempAvgHoly += saram.holy[i][j];
                 return (tempAvgHoly/(saram.num[0]+saram.num[1]+saram.num[2]) >= 0.7f); 
             case 7:
-                return true;  // mammoth raid success
+                return (mammothBox.huntedExperience > 0);  // mammoth raid success
             case 8:
                 return ironAge; 
             case 9:

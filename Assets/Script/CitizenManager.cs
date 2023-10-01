@@ -29,7 +29,7 @@ public class CitizenManager : MonoBehaviour
         seasonBox = seasonManager.GetComponent<SeasonManager>();
         messageBox = messageManager.GetComponent<MessageManager>();
         buildBox = buildManager.GetComponent<BuildingManager>();
-        
+
         // Add proto DB
         for(int i = 0; i<5; i++)
             citizenAdd(true);
@@ -178,8 +178,14 @@ public class CitizenManager : MonoBehaviour
             case 3 : // Killed in Action
                 messageBox.messageAdd(saram.nickname[job][killpivot]+" Killed in Action");
                 break;
+            case 4 : // Disaster
+                messageBox.messageAdd(saram.nickname[job][killpivot]+" Could't Resist the Power of Nature");
+                break;
             case 40 : // fanatic kill
                 messageBox.messageAdd(saram.nickname[job][killpivot]+" became victim of the inquisition");
+                break;
+            case 41 : // murder by disaster or killer characteristic citizen
+                messageBox.messageAdd(saram.nickname[job][killpivot]+" Murdered");
                 break;
             case -1 : // didn't die
                 break;

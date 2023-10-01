@@ -55,4 +55,7 @@ public class BuildingManager : MonoBehaviour
             }
         }
     }
+    public void DestroyBuilding(int num) {
+        
+    }
 }

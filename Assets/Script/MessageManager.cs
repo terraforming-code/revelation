@@ -29,7 +29,7 @@ public class MessageManager : MonoBehaviour
     {
         GameObject tempMessageUI = Instantiate(messageUI);
         TextMeshPro tempMessageText = tempMessageUI.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>();
-        if(message.Count == 4) messageKill(3);
+        if(message.Count == 5) messageKill(4);
         tempMessageUI.transform.SetParent(this.transform);
         tempMessageUI.transform.position = this.transform.position + new Vector3(0,-0.7f * message.Count,0);
         tempMessageText.text = context;

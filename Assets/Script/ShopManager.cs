@@ -5,9 +5,9 @@ using TMPro;
 
 public class ShopManager : MonoBehaviour
 {
-    public GameObject SeasonPivot, CardBox, EffectManager, InvenManager, Resource, TechManager;
+    public GameObject SeasonPivot, CardBox, EffectManager, InvenManager, Resource, TechManager, HellManager;
     public Sprite EffectStand, InvenStand, TechStand;
-
+    HellManager hellBox;
     TechManager techBox;
     SeasonManager seasonManager;
     CardBox cardBox;
@@ -18,14 +18,16 @@ public class ShopManager : MonoBehaviour
     int cardAmount;
 
     int shop1 = -1, shop2 = -1, shop3 = -1, shop4 = -1;
+    int shopRerollPrice = 10; // base value changes at ChangeCard()
     SpriteRenderer shop1Image, shop2Image, shop3Image, shop4Image;
     SpriteRenderer shop1Stand, shop2Stand, shop3Stand, shop4Stand;
-    TextMeshPro shop1Price, shop2Price, shop3Price, shop4Price;
+    TextMeshPro shop1Price, shop2Price, shop3Price, shop4Price, shopRerollPriceText;
 
     bool waitspring;
     // Start is called before the first frame update
     void Start()
     {
+        hellBox = HellManager.GetComponent<HellManager>();
         techBox = TechManager.GetComponent<TechManager>();
         seasonManager = SeasonPivot.GetComponent<SeasonManager>();
         cardBox = CardBox.GetComponent<CardBox>();
@@ -46,6 +48,7 @@ public class ShopManager : MonoBehaviour
         shop2Price = this.transform.GetChild(2).GetChild(1).gameObject.GetComponent<TextMeshPro>();
         shop3Price = this.transform.GetChild(3).GetChild(1).gameObject.GetComponent<TextMeshPro>();
         shop4Price = this.transform.GetChild(4).GetChild(1).gameObject.GetComponent<TextMeshPro>();
+        shopRerollPriceText = this.transform.GetChild(5).GetChild(0).gameObject.GetComponent<TextMeshPro>();
     }
 
     // Update is called once per frame
@@ -59,6 +62,17 @@ public class ShopManager : MonoBehaviour
             if(hit.collider != null)
             {
                 GameObject click_obj = hit.transform.gameObject;
+                if(click_obj.name == "ShopRerollButton") {
+                    resource.money -= shopRerollPrice;
+                    shopRerollPrice *= 3;// increase scale
+                    ChangeCard(true);
+                }
+                if(click_obj.name == "CardHellBuyButton" && hellBox.upcomingHell != -1 && hellBox.hellSprite.sprite == null) {
+                    if(resource.money >= hellBox.hellPrice) {
+                        hellBox.hellSprite.sprite = hellBox.hellSpriteBox[hellBox.upcomingHell];
+                        hellBox.hellPriceText.text = "";
+                    }
+                }
                 if(click_obj.name == "Card1BuyButton" && shop1 != -1) {
                     if(resource.money >= cardBox.price[shop1]) {
                         if(BuyCard(shop1)) {
@@ -108,22 +122,30 @@ public class ShopManager : MonoBehaviour
         if(seasonManager.season > 0 && seasonManager.season < 2 && waitspring)
         {
             waitspring = false;
+            hellBox.ChangeHell(true);
             ChangeCard();
         }
         if(seasonManager.season > 2 && !waitspring)
         {
             waitspring = true;
+            hellBox.ChangeHell(false);
             ChangeCard();
         }
     }
 
-    void ChangeCard()
+    void ChangeCard(bool rerolling = false)
     {
+        if(!rerolling) {
+            shopRerollPrice = 10;
+        }
+        shopRerollPriceText.text = shopRerollPrice.ToString();
         List<int> cardNow = new List<int>();
+        
         int tempValue;
-        for (int i = 0; i < 16; i++) {
+        for (int i = 1; i < 16; i++) {
             if(effectBox.enable[i]!=1) cardNow.Add(i);
         }
+        if(cardNow.Count == 0) cardNow.Add(0);
         for(int i = 16; i < 100-cardBox.techStart; i++) {
             cardNow.Add(i);
         }
@@ -211,6 +233,7 @@ public class ShopManager : MonoBehaviour
         {
             effectBox.enable[num] = 1;
             effectBox.objEnable(num);
+            effectBox.effectStandOpen(num);
             return true;
         }
         else if(cardBox.type[num] == 1)

@@ -5,7 +5,11 @@ using TMPro;
 
 public class Resource : MonoBehaviour
 {
-    public GameObject seasonManager, citizenManager, messageManager, enemyManager, buildManager;
+    public GameObject seasonManager, citizenManager, messageManager, enemyManager, buildManager, mammothManager, hellManager, effectManager;
+    public GameObject BGRainbow;
+    HellManager hellBox;
+    EffectManager effectBox;
+    MammothManager mammothBox;
     BuildingManager buildBox;
     SeasonManager seasonBox;
     Saram saram;
@@ -25,8 +29,13 @@ public class Resource : MonoBehaviour
     bool waitNewSeason = true;
     
     public bool poongzak = false;
+
+    float happyBeforeHell;
     void Start()
     {
+        effectBox = effectManager.GetComponent<EffectManager>();
+        hellBox = hellManager.GetComponent<HellManager>();
+        mammothBox = mammothManager.GetComponent<MammothManager>();
         buildBox = buildManager.GetComponent<BuildingManager>();
         seasonBox = seasonManager.GetComponent<SeasonManager>();
         citizenBox = citizenManager.GetComponent<CitizenManager>();
@@ -44,7 +53,7 @@ public class Resource : MonoBehaviour
         moneyText.text = money.ToString();
         if(food > foodLimit && buildBox.build[4]!=1f) food = foodLimit; // FOOD LIMIT
         foodText.text = ((int)food).ToString(); 
-        powerText.text = ((int)power).ToString();
+        powerText.text = power.ToString("F1");
         grainText.text = ((int)grain).ToString();
         if((!waitNewSeason && seasonEat % 12 < seasonBox.season * 3) || (waitNewSeason && seasonBox.season < 0.33))
         {
@@ -147,13 +156,18 @@ public class Resource : MonoBehaviour
             else power = tempPower * happy * fightTech;
 
 
-            //enemy fight process
+            //enemy&mammoth fight process
             if(seasonEat % 3 == 1)
             {
                 if(enemyBox.fightDate == seasonEat % 12)
                 {
                     enemyBox.GoWar(true);
                     enemyBox.fightDate = -1;
+                }
+                else if(mammothBox.HuntDate == seasonEat % 12)
+                {
+                    mammothBox.GoHunt(true);
+                    mammothBox.HuntDate = -1;
                 }
                 if(saram.num[0] == 1)
                 {
@@ -171,13 +185,63 @@ public class Resource : MonoBehaviour
                         if(Random.Range(0,5) == 0) {enemyBox.fightDate = seasonEat % 12; }
                         //enemyBox.fightDate = seasonEat % 12; // for debugging
                     }
+
+                    if(saram.char1[0][0] == 0)
+                    {
+                        mammothBox.HuntDate = -1;
+                    }
+                    else if((saram.char3[0][0] == 0) && mammothBox.HuntDate == -1 && enemyBox.fightDate != (seasonEat+6)%12)
+                    {
+                        if(Random.Range(0,2) == 0) {mammothBox.HuntDate = (seasonEat+6) % 12; }
+                        mammothBox.HuntDate = (seasonEat+6) % 12; // for debugging
+                    }
+                    else if(mammothBox.HuntDate == -1 && enemyBox.fightDate != (seasonEat+6)%12)
+                    {
+                        if(Random.Range(0,5) == 0) {mammothBox.HuntDate = (seasonEat+6) % 12; }
+                        mammothBox.HuntDate = (seasonEat+6) % 12; // for debugging
+                    }
                 }
                 enemyBox.enemyObjRearrange();
+                mammothBox.mammothObjRearrange();
             }
 
             //citizen rearrange
             citizenBox.citizenRearrange();
 
+            //hell process + Rainbow
+            if(seasonEat % 12 == 3 || seasonEat % 12 == 9 )
+            {
+                hellBox.guardHell = hellBox.HellGuardCondition();
+            }
+            else if(seasonEat % 12 == 4 || seasonEat % 12 == 10 )
+            {
+                if(hellBox.guardHell == false)
+                {
+                    if(Random.Range(0,6)==0 && effectBox.enable[13] == 1)
+                    {
+                        BGRainbow.SetActive(true);
+                        happy = Mathf.Max(happy,happyBeforeHell);
+                    }
+                }
+                hellBox.hellDieNum *= 1.1f;
+                hellBox.guardHell = true;
+                hellBox.bigLose = false;
+                hellBox.hellDie = 0f;
+                hellBox.hellDestroy = 0f;
+                if(hellBox.hellLazy) {
+                    hellBox.hellLazy = false;
+                    for(int i = 0; i < 3; i++) {
+                        for(int j = 0; j < saram.num[i]; j++) {
+                            saram.farming[i][j] *= 4f;
+                            saram.fighting[i][j] *= 4f;
+                        }
+                    }
+                }
+            }
+            else if(seasonEat % 12 == 5 || seasonEat % 12 == 11)
+            {
+                BGRainbow.SetActive(false);
+            }
             
             seasonEat++;
             waitNewSeason = false;

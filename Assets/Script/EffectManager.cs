@@ -70,5 +70,10 @@ public class EffectManager : MonoBehaviour
             }
         }
     }
+    public void effectStandOpen(int num)
+    {
+        if(num-currentPage >= 0 && num-currentPage <= 7)
+            effectStand[num-currentPage].sprite = UnlockedSprite;
+    }
 
 }

@@ -13,7 +13,8 @@ public class EnemyManager : MonoBehaviour
     Saram saram;
     CitizenManager citizenBox;
 
-    public GameObject SeasonTab, SeasonBarBear;
+    public GameObject SeasonTab, SeasonBarBear, hellManager;
+    HellManager hellBox;
     GameObject fightDateObj;
     TextMeshPro enemyLifeText, enemyPowerText;
 
@@ -21,7 +22,7 @@ public class EnemyManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        hellBox = hellManager.GetComponent<HellManager>();
         resource = Resource.GetComponent<Resource>();
         saram = Resource.GetComponent<Saram>();
         citizenBox = citizenManager.GetComponent<CitizenManager>();
@@ -44,7 +45,7 @@ public class EnemyManager : MonoBehaviour
         float cha;
         float enemyPowerPerMan = enemyPower/enemyLife;
         fightCounter++;
-        if(realPower >= enemyPower)
+        if(realPower >= enemyPower && !hellBox.bigLose)
         {
             saram.HolyAdd(0.1f);
             resource.happy = Mathf.Min(resource.happy+0.1f,1.2f);
@@ -69,7 +70,7 @@ public class EnemyManager : MonoBehaviour
         else
         {
             saram.HolyAdd(-0.1f);
-            cha = enemyPower;
+            cha = enemyPower * resource.defense * (saram.num[0]==1? (saram.char3[0][0]==5? 2f : 1f) : 1f) * (hellBox.bigLose? 2f : 1f);
             while(saram.num[2] > 0)
             {
                 Debug.Log($"Died army left {cha}");
@@ -77,7 +78,7 @@ public class EnemyManager : MonoBehaviour
                 citizenBox.citizenKill(2,0,3);
                 cha --;
             }
-            cha = realPower / 2 * resource.defense * (saram.num[0]==1? (saram.char3[0][0]==5? 2f : 1f) : 1f);
+            cha = realPower / 2 ;
             while(enemyLife > 0)
             {
                 Debug.Log($"Died enemy left {cha}");
@@ -87,6 +88,7 @@ public class EnemyManager : MonoBehaviour
                 cha --;
             }  
         }
+        
         citizenBox.citizenRearrange();
 
     }
