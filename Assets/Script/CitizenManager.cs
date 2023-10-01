@@ -199,6 +199,7 @@ public class CitizenManager : MonoBehaviour
             else resource.happy = Mathf.Max(resource.happy-0.05f,0.8f);
             diedCitizenNum++;
         }
+        saram.num[job]--;
         saram.nickname[job].RemoveAt( killpivot );
         saram.holy[job].RemoveAt( killpivot );
         saram.farming[job].RemoveAt( killpivot );
@@ -209,7 +210,7 @@ public class CitizenManager : MonoBehaviour
         saram.char1[job].RemoveAt( killpivot );
         saram.char2[job].RemoveAt( killpivot );
         saram.char3[job].RemoveAt( killpivot );
-        saram.num[job]--;
+        
 
         
     }
