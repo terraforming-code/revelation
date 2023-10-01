@@ -5,8 +5,9 @@ using TMPro;
 
 public class HellManager : MonoBehaviour
 {
-    public GameObject Resource, SeasonManager, CitizenManager, buildManager, enemyManager, mammothManager,techManager,effectManager;
+    public GameObject Resource, SeasonManager, CitizenManager, buildManager, enemyManager, mammothManager,helleventManager,techManager,effectManager;
     public Sprite hellHappyDaySprite;
+    HellEventManager hellEventBox;
     EffectManager effectBox;
     TechManager techBox;
     MammothManager mammothBox;
@@ -29,9 +30,12 @@ public class HellManager : MonoBehaviour
     public bool hellLazy = false;
     public bool experienceFlood = false;
     public int hellPrice;
+
+    bool eventTriggerOn = false;
     // Start is called before the first frame update
     void Start()
     {
+        hellEventBox = helleventManager.GetComponent<HellEventManager>();
         effectBox = effectManager.GetComponent<EffectManager>();
         techBox = techManager.GetComponent<TechManager>();
         resource = Resource.GetComponent<Resource>();
@@ -51,6 +55,7 @@ public class HellManager : MonoBehaviour
     {
         if(!guardHell)
         {
+            if(!eventTriggerOn) {eventTriggerOn = true; hellEventBox.HellEventStart(upcomingHell);}
             switch(upcomingHell)
             {
                 case 0 :
@@ -84,8 +89,6 @@ public class HellManager : MonoBehaviour
                 case 13 :
                     hellDestroy += Time.deltaTime/seasonBox.gamespeed*12 * Random.Range(1f,3f);
                     break;
-
-
             }
             if(hellDie >= 1f) {
                 hellDie = 0f;
@@ -99,6 +102,10 @@ public class HellManager : MonoBehaviour
                 hellDestroy = 0f;
                 buildBox.DestroyBuilding(-1);
             }
+
+        }
+        else {
+            if(eventTriggerOn) {eventTriggerOn = false; hellEventBox.HellEventEnd();}
         }
         
     }

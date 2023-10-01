@@ -3751,6 +3751,7 @@ MonoBehaviour:
   buildManager: {fileID: 1777109336}
   enemyManager: {fileID: 221166261}
   mammothManager: {fileID: 1060077990}
+  helleventManager: {fileID: 1170946769}
   techManager: {fileID: 1510245514}
   effectManager: {fileID: 808713322}
   hellHappyDaySprite: {fileID: 21300000, guid: c2db8e84f40c407418de8283f6df9e96, type: 3}
@@ -15360,6 +15361,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1170946771}
   - component: {fileID: 1170946770}
+  - component: {fileID: 1170946772}
   m_Layer: 0
   m_Name: HellEventBG
   m_TagString: Untagged
@@ -15409,7 +15411,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 10
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.4716981, g: 0.024029866, b: 0.024029866, a: 0.4392157}
+  m_Color: {r: 0.10628728, g: 0.3018868, b: 0.103666775, a: 0.4745098}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -15435,6 +15437,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1170946772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1170946769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3c148ddbf549df4a82bee4b7c90f75e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hellManager: {fileID: 376111196}
 --- !u!1 &1194765787
 GameObject:
   m_ObjectHideFlags: 0
