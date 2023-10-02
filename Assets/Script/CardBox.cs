@@ -47,9 +47,9 @@ public class CardBox : MonoBehaviour
         }
         if(i == 4)
         {
-            objCitizenWindow.transform.GetChild(6).GetChild(6).gameObject.SetActive(true);
-            objCitizenWindow.transform.GetChild(7).GetChild(6).gameObject.SetActive(true);
-            objCitizenWindow.transform.GetChild(8).GetChild(6).gameObject.SetActive(true);
+            objCitizenWindow.transform.Find("CitizenGroups").GetChild(0).GetChild(6).gameObject.SetActive(true);
+            objCitizenWindow.transform.Find("CitizenGroups").GetChild(1).GetChild(6).gameObject.SetActive(true);
+            objCitizenWindow.transform.Find("CitizenGroups").GetChild(2).GetChild(6).gameObject.SetActive(true);
         }
         if(i == 5)
         {

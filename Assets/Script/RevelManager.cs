@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class RevelManager : MonoBehaviour
@@ -33,6 +34,10 @@ public class RevelManager : MonoBehaviour
         messageBox = messageManager.GetComponent<MessageManager>();
         MegaphoneButton = this.transform.GetChild(3).gameObject;
         revelPercentText = this.transform.GetChild(4).gameObject.GetComponent<TextMeshPro>();
+
+        transform.GetChild(1).GetChild(0).GetComponent<Button>().onClick.AddListener(HandleClickConfirmButton);
+        transform.GetChild(2).GetChild(0).GetComponent<Button>().onClick.AddListener(HandleClickCancelButton);
+
     }
 
     // Update is called once per frame
@@ -91,6 +96,46 @@ public class RevelManager : MonoBehaviour
         }
         
     }
+
+    public void HandleClickConfirmButton()
+    {
+        if(invenBox.invenNumBox[pivot]>=100 && !techBox.techCondition(invenBox.invenNumBox[pivot]))
+        {
+            messageBox.messageAdd("Insufficient Condition to reveal technology");
+        }
+        else {
+            if(Random.Range(0f,1f) <= revelPercent) // Successed
+            {
+                cards.skill(invenBox.invenNumBox[pivot]);
+                if(invenBox.invenNumBox[pivot]>=100) {
+                    techBox.techUnlock(invenBox.invenNumBox[pivot]);
+                }
+                saram.HolyAdd(0.05f);
+                messageBox.messageAdd("Revealed");
+            }
+            else
+            {
+                if(invenBox.invenNumBox[pivot]>=100) {
+                    techBox.enable[invenBox.invenNumBox[pivot]-100] = 0;
+                }
+                messageBox.messageAdd("Unrevealed");
+            }
+
+            invenBox.invenNumBox.RemoveAt(pivot);
+            invenBox.invenRearrange();
+            reveling = false;
+            if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
+            this.gameObject.SetActive(false);
+        }
+    }
+
+    public void HandleClickCancelButton()
+    {
+        reveling = false;
+        if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
+        this.gameObject.SetActive(false);     
+    }
+
     public void RevelOpen(int num)
     {
         

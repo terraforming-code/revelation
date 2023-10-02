@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class CitizenManager : MonoBehaviour
@@ -34,6 +35,18 @@ public class CitizenManager : MonoBehaviour
         effectBox = effectManager.GetComponent<EffectManager>();
         techBox = techManager.GetComponent<TechManager>();
 
+        int citizenGroupCount = transform.Find("CitizenGroups").childCount;
+        for (int i=0; i<citizenGroupCount; i++)
+        {
+            int index = i; /* ! AddListner를 위해 필요 */
+            Transform citizenGroup = transform.Find("CitizenGroups").GetChild(i);
+            citizenGroup.Find("Promo").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickPromoButton(index)); /* Promo 버튼과 Handler Method 연결 */
+            citizenGroup.Find("Kill").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickKillButton(index)); /* Promo 버튼과 Handler Method 연결 */
+        }
+
+        transform.Find("CitizenUp").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickUpButton()); /* Promo 버튼과 Handler Method 연결 */
+        transform.Find("CitizenDown").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickDownButton()); /* Promo 버튼과 Handler Method 연결 */
+
         // Add proto DB
         for(int i = 0; i<5; i++)
             citizenAdd(true);
@@ -63,8 +76,8 @@ public class CitizenManager : MonoBehaviour
         for(int i = 0; i < Mathf.Min(saram.num[tabNum] - citizenPivot[tabNum],3); i++)
         {
             int temp_i = citizenPivot[tabNum]+i;
-            GameObject tempGroup = this.transform.GetChild(6+i).gameObject;
-            GaugeScale(tempGroup.transform.GetChild(3),-3.05f,-1.22f,0.39f,saram.life[tabNum][temp_i]/5); // LIFE
+            Transform tempGroup = this.transform.Find("CitizenGroups").GetChild(i);
+            GaugeScale(tempGroup.Find("CitizenHPBar"), -3.05f,-1.22f,0.39f,saram.life[tabNum][temp_i]/5); // LIFE
         }
         if(Input.GetMouseButtonDown(0))
         {
@@ -84,27 +97,50 @@ public class CitizenManager : MonoBehaviour
                     case "CitizenTabButton3" :
                         tabNum = 2; citizenRearrange();
                         tabPivotObj.transform.position = new Vector3(tabPivotObj.transform.position.x,hit.transform.position.y,0); break;
-                    case "CitizenPromo1" :
-                        citizenMove(tabNum,citizenPivot[tabNum] + 0,0); citizenRearrange(); break;
-                    case "CitizenPromo2" :
-                        citizenMove(tabNum,citizenPivot[tabNum] + 1,0); citizenRearrange(); break;
-                    case "CitizenPromo3" :
-                        citizenMove(tabNum,citizenPivot[tabNum] + 2,0); citizenRearrange(); break;
-                    case "CitizenKill1" :
-                        citizenKill(tabNum,citizenPivot[tabNum] + 0,1); citizenRearrange(); break;
-                    case "CitizenKill2" :
-                        citizenKill(tabNum,citizenPivot[tabNum] + 1,1); citizenRearrange(); break;
-                    case "CitizenKill3" :
-                        citizenKill(tabNum,citizenPivot[tabNum] + 2,1); citizenRearrange(); break;
-                    case "CitizenUp" :
-                        citizenPivot[tabNum]-=3; citizenRearrange(); break;
-                    case "CitizenDown" :
-                        citizenPivot[tabNum]+=3; citizenRearrange(); break;
+                    // case "CitizenPromo1" :
+                    //     citizenMove(tabNum,citizenPivot[tabNum] + 0, 0); citizenRearrange(); break;
+                    // case "CitizenPromo2" :
+                    //     citizenMove(tabNum, citizenPivot[tabNum] + 1, 0); citizenRearrange(); break;
+                    // case "CitizenPromo3" :
+                    //     citizenMove(tabNum, citizenPivot[tabNum] + 2, 0); citizenRearrange(); break;
+                    // case "CitizenKill1" :
+                    //     citizenKill(tabNum, citizenPivot[tabNum] + 0, 1); citizenRearrange(); break;
+                    // case "CitizenKill2" :
+                    //     citizenKill(tabNum, citizenPivot[tabNum] + 1, 1); citizenRearrange(); break;
+                    // case "CitizenKill3" :
+                    //     citizenKill(tabNum, citizenPivot[tabNum] + 2, 1); citizenRearrange(); break;
+                    // case "CitizenUp" :
+                    //     citizenPivot[tabNum]-=3; citizenRearrange(); break;
+                    // case "CitizenDown" :
+                    //     citizenPivot[tabNum]+=3; citizenRearrange(); break;
                 }
             }
             
         }
     }
+
+
+    public void HandleClickPromoButton(int index)
+    {
+        citizenMove(tabNum,citizenPivot[tabNum] + index, 0); 
+        citizenRearrange();
+    }
+    public void HandleClickKillButton(int index)
+    {
+        citizenKill(tabNum,citizenPivot[tabNum] + index, 1); 
+        citizenRearrange();
+    }
+    public void HandleClickUpButton()
+    {
+        citizenPivot[tabNum]-=3; 
+        citizenRearrange();
+    }
+    public void HandleClickDownButton()
+    {
+        citizenPivot[tabNum]+=3; 
+        citizenRearrange();        
+    }
+
     public void citizenAdd(bool newGame = false)
     {
         int job = Random.Range(0,2)+1;
@@ -250,13 +286,13 @@ public class CitizenManager : MonoBehaviour
         switch(saram.num[tabNum] - citizenPivot[tabNum])
         {
             case 0:
-                this.transform.GetChild(6).gameObject.SetActive(false); // group1
+                this.transform.Find("CitizenGroups").GetChild(0).gameObject.SetActive(false); // group1
                 goto case 1;
             case 1:
-                this.transform.GetChild(7).gameObject.SetActive(false); // group2
+                this.transform.Find("CitizenGroups").GetChild(1).gameObject.SetActive(false); // group2
                 goto case 2;
             case 2:
-                this.transform.GetChild(8).gameObject.SetActive(false); // group3
+                this.transform.Find("CitizenGroups").GetChild(2).gameObject.SetActive(false); // group3
                 goto case 3;
             case 3:
                 downObj.SetActive(false);
@@ -270,17 +306,16 @@ public class CitizenManager : MonoBehaviour
         {
             
             int temp_i = citizenPivot[tabNum]+i;
-            GameObject tempGroup = this.transform.GetChild(6+i).gameObject;
-            TextMeshPro tempGroupname = tempGroup.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>(); // name
-            tempGroup.SetActive(true);
+            Transform tempGroup = this.transform.Find("CitizenGroups").GetChild(i);
+            TextMeshPro tempGroupname = tempGroup.GetChild(1).gameObject.GetComponent<TextMeshPro>(); // name
+            tempGroup.gameObject.SetActive(true);
             tempGroupname.text = saram.nickname[tabNum][temp_i];
 
-            GaugeScale(tempGroup.transform.GetChild(2),-3.05f,-1.22f,0.39f,saram.holy[tabNum][temp_i]); // HOLY
-            GaugeScale(tempGroup.transform.GetChild(3),-3.05f,-1.22f,0.39f,saram.life[tabNum][temp_i]/5); // LIFE
+            GaugeScale(tempGroup.GetChild(2),-3.05f,-1.22f,0.39f,saram.holy[tabNum][temp_i]); // HOLY
+            GaugeScale(tempGroup.GetChild(3),-3.05f,-1.22f,0.39f,saram.life[tabNum][temp_i]/5); // LIFE
 
-            if(saram.num[0] == 1) tempGroup.transform.GetChild(4).gameObject.SetActive(false); // promo button
-            else tempGroup.transform.GetChild(4).gameObject.SetActive(true);
-
+            if(saram.num[0] == 1) tempGroup.Find("Promo").gameObject.SetActive(false); // promo button
+            else tempGroup.Find("Promo").gameObject.SetActive(true);
         }
         
     }
