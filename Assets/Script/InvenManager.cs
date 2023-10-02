@@ -57,6 +57,12 @@ public class InvenManager : MonoBehaviour
                         invenSelectObj.SetActive(false);
                     }
                 }
+                else if(click_obj.name == "InvenRemoveButton" && invenSelect != -1 && !RevelBox.reveling) {
+                    invenNumBox.RemoveAt(invenSelect);
+                    invenRearrange();
+                    invenSelect = -1;
+                    invenSelectObj.SetActive(false);
+                }
                 else if(!RevelBox.reveling) {
                     int clickNumber = -1;
                     switch(click_obj.name) {

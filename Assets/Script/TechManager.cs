@@ -129,5 +129,14 @@ public class TechManager : MonoBehaviour
             this.transform.GetChild(2).GetChild(2).gameObject.SetActive(true);
         }
     }
+    public void TechnicianNew() {
+        List<int> possibleTechTemp = new List<int>();
+        for(int i = 0; i < enable.Length; i++) {
+            if(enable[i]==0 && techCondition(i)) possibleTechTemp.Add(i);
+        }
+        if(possibleTechTemp.Count > 0) {
+            techUnlock(possibleTechTemp[Random.Range(0,possibleTechTemp.Count)]);
+        }
+    }
 }
 

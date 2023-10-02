@@ -85,10 +85,14 @@ public class Resource : MonoBehaviour
                 grain = 0f;
             }
             else {
+                float godfarmer = 1f;
+                if(saram.num[0] == 1) {
+                    if(saram.char1[0][0] == -11) godfarmer = 1.5f;
+                }
                 for(int i = 0; i<saram.num[1]; i++)
                 {
-                    if(seasonEat % 12 <= 6) grain += saram.farming[1][i] * happy * farmTech;
-                    grain += saram.farming[1][i] / 2f * happy * farmTech;
+                    if(seasonEat % 12 <= 6) grain += saram.farming[1][i] * happy * farmTech * godfarmer;
+                    grain += saram.farming[1][i] / 2f * happy * farmTech * godfarmer;
                 }
                 
             }
@@ -154,7 +158,7 @@ public class Resource : MonoBehaviour
                 }
             }
             //power process
-            if(saram.num[0] == 1) power = (saram.char3[0][0] == 3? 1.2f : 1)*tempPower * happy * fightTech;
+            if(saram.num[0] == 1) power = (saram.char3[0][0] == 3? 1.2f : 1)*tempPower * happy * fightTech * (saram.char1[0][0]==-10? 1.5f : 1);
             else power = tempPower * happy * fightTech;
 
 
@@ -260,7 +264,9 @@ public class Resource : MonoBehaviour
                 int maxPivot = -1;
                 float maxValue = 0f;
                 if(saram.char1[0][0] == 0)
-                {}
+                {
+                    // no job change   
+                }
                 else if(saram.char3[0][0] == 3)
                 {
                     for(int i = 0;i < saram.num[1];i ++)

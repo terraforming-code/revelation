@@ -5,8 +5,10 @@ using TMPro;
 
 public class CitizenManager : MonoBehaviour
 {
-    public GameObject Resource, messageManager;
-    public GameObject seasonManager, buildManager;
+    public GameObject Resource, messageManager, effectManager;
+    public GameObject seasonManager, buildManager, techManager;
+    TechManager techBox;
+    EffectManager effectBox;
     BuildingManager buildBox;
     SeasonManager seasonBox;
     Resource resource;
@@ -29,6 +31,8 @@ public class CitizenManager : MonoBehaviour
         seasonBox = seasonManager.GetComponent<SeasonManager>();
         messageBox = messageManager.GetComponent<MessageManager>();
         buildBox = buildManager.GetComponent<BuildingManager>();
+        effectBox = effectManager.GetComponent<EffectManager>();
+        techBox = techManager.GetComponent<TechManager>();
 
         // Add proto DB
         for(int i = 0; i<5; i++)
@@ -132,10 +136,32 @@ public class CitizenManager : MonoBehaviour
         saram.love[job].Add((float)Random.Range(8,13) / 10.0f);
         saram.life[job].Add(Random.Range(1.0f,3.0f));
 
-        saram.char1[job].Add(Random.Range(0,6)); saram.GiveChar(job,saram.char1[job].Count-1,saram.char1[job][saram.char1[job].Count-1],1);
-        saram.char2[job].Add(Random.Range(0,7)); saram.GiveChar(job,saram.char2[job].Count-1,saram.char2[job][saram.char2[job].Count-1],2);
-        saram.char3[job].Add(Random.Range(0,6)); saram.GiveChar(job,saram.char3[job].Count-1,saram.char3[job][saram.char3[job].Count-1],3);
-
+        saram.char1[job].Add(Random.Range(0,6));
+        saram.char2[job].Add(Random.Range(0,7)); 
+        saram.char3[job].Add(Random.Range(0,6));
+        // Special skill provide process by god's effect
+        if(effectBox.enable[8]+effectBox.enable[9]+effectBox.enable[10]+effectBox.enable[11] > 0) {
+            if(Random.Range(0,11-effectBox.enable[8]-effectBox.enable[9]-effectBox.enable[10]-effectBox.enable[11]) == 3) { // probability
+                List<int> specialskillTemp = new List<int>();
+                int chosenSkill;
+                for(int i = 8;i < 12;i++)
+                    if(effectBox.enable[i]==1) specialskillTemp.Add(i);
+                chosenSkill = specialskillTemp[Random.Range(0,specialskillTemp.Count)];
+                if(chosenSkill == 8) {
+                    saram.char2[job][saram.char2[job].Count-1] = -8;
+                }
+                else if(chosenSkill == 9) {
+                    saram.char3[job][saram.char3[job].Count-1] = -9;
+                }
+                else {
+                    saram.char1[job][saram.char1[job].Count-1] = -chosenSkill;
+                }
+                
+            }
+        } 
+        saram.GiveChar(job,saram.char1[job].Count-1,saram.char1[job][saram.char1[job].Count-1],1);
+        saram.GiveChar(job,saram.char2[job].Count-1,saram.char2[job][saram.char2[job].Count-1],2);
+        saram.GiveChar(job,saram.char3[job].Count-1,saram.char3[job][saram.char3[job].Count-1],3);
 
         saram.num[job]++;
 
@@ -158,7 +184,9 @@ public class CitizenManager : MonoBehaviour
         saram.char2[movejob].Add(saram.char2[job][pivot]);
         saram.char3[movejob].Add(saram.char3[job][pivot]);
 
-
+        if(movejob==0 && saram.char3[0][0]==-9) { // technician
+            techBox.TechnicianNew();
+        }
         saram.num[movejob]++;
         citizenKill(job,pivot,-1);
     }
