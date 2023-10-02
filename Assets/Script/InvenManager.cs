@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class InvenManager : MonoBehaviour
 {
@@ -29,63 +31,90 @@ public class InvenManager : MonoBehaviour
         RevelBox = RevelWindow.GetComponent<RevelManager>();
         EffectBox = EffectWindow.GetComponent<EffectManager>();
         saram = Resource.GetComponent<Saram>();
-        for(int i = 0;i < 8;i++) {
-            invenBlock[i] = this.transform.GetChild(i).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+        for(int i = 0; i < 8; i++) {
+            int index = i; /* ! AddListener를 위해 필요 */
+            invenBlock[i] = this.transform.GetChild(i).GetChild(0).gameObject.GetComponent<SpriteRenderer>();    
+            this.transform.GetChild(i).GetChild(1).Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickInvenButton(index)); /* Inven 버튼과 Handler Method 연결 */
         }
     }
     void Update()
     {
-        if(Input.GetMouseButtonDown(0))
-        {
-            Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 0f);
+        // if(Input.GetMouseButtonDown(0))
+        // {
+        //     Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //     RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 0f);
 
-            if(hit.collider != null)
-            {
-                GameObject click_obj = hit.transform.gameObject;
-                if(click_obj.name == "RevelButton" && invenSelect != -1 && !RevelBox.reveling) {
-                    if(saram.num[0] == 1) {
-                        Debug.Log($"RevelOpen : {invenSelect} {invenNumBox[invenSelect]}");
-                        RevelWindow.SetActive(true);
+        //     if(hit.collider != null)
+        //     {
+        //         GameObject click_obj = hit.transform.gameObject;
+        //         if(click_obj.name == "RevelButton" && invenSelect != -1 && !RevelBox.reveling) {
+        //             if(saram.num[0] == 1) {
+        //                 Debug.Log($"RevelOpen : {invenSelect} {invenNumBox[invenSelect]}");
+        //                 RevelWindow.SetActive(true);
 
-                        //if(EffectBox.enable[3] != 1) RevelWindow.transform.GetChild(3).gameObject.SetActive(false); // megaphone check
-                        //else RevelWindow.transform.GetChild(3).gameObject.SetActive(true); // megaphone check
+        //                 //if(EffectBox.enable[3] != 1) RevelWindow.transform.GetChild(3).gameObject.SetActive(false); // megaphone check
+        //                 //else RevelWindow.transform.GetChild(3).gameObject.SetActive(true); // megaphone check
 
-                        RevelBox.reveling = true;
-                        RevelBox.RevelOpen(invenSelect);
-                        invenSelect = -1;
-                        invenSelectObj.SetActive(false);
-                    }
-                }
-                else if(!RevelBox.reveling) {
-                    int clickNumber = -1;
-                    switch(click_obj.name) {
-                        case "InvenCard0" :
-                            clickNumber = 1; break;
-                        case "InvenCard1" :
-                            clickNumber = 2; break;
-                        case "InvenCard2" :
-                            clickNumber = 3; break;
-                        case "InvenCard3" :
-                            clickNumber = 4; break;
-                        case "InvenCard4" :
-                            clickNumber = 5; break;
-                        case "InvenCard5" :
-                            clickNumber = 6; break;
-                        case "InvenCard6" :
-                            clickNumber = 7; break;
-                        case "InvenCard7" :
-                            clickNumber = 8; break;
-                    }
-                    if(clickNumber != -1 && invenNumBox.Count >= clickNumber) {
-                        invenSelect = clickNumber-1;
-                        invenSelectObj.SetActive(true);
-                        invenSelectObj.transform.position = this.transform.GetChild(clickNumber-1).position;
-                    }
-                }
-            }
+        //                 RevelBox.reveling = true;
+        //                 RevelBox.RevelOpen(invenSelect);
+        //                 invenSelect = -1;
+        //                 invenSelectObj.SetActive(false);
+        //             }
+        //         }
+        //         else if(!RevelBox.reveling) {
+        //             int clickNumber = -1;
+        //             switch(click_obj.name) {
+        //                 case "InvenCard0" :
+        //                     clickNumber = 1; break;
+        //                 case "InvenCard1" :
+        //                     clickNumber = 2; break;
+        //                 case "InvenCard2" :
+        //                     clickNumber = 3; break;
+        //                 case "InvenCard3" :
+        //                     clickNumber = 4; break;
+        //                 case "InvenCard4" :
+        //                     clickNumber = 5; break;
+        //                 case "InvenCard5" :
+        //                     clickNumber = 6; break;
+        //                 case "InvenCard6" :
+        //                     clickNumber = 7; break;
+        //                 case "InvenCard7" :
+        //                     clickNumber = 8; break;
+        //             }
+        //             if(clickNumber != -1 && invenNumBox.Count >= clickNumber) {
+        //                 invenSelect = clickNumber-1;
+        //                 invenSelectObj.SetActive(true);
+        //                 invenSelectObj.transform.position = this.transform.GetChild(clickNumber-1).position;
+        //             }
+        //         }
+        //     }
+        // }
+    }
+
+    public void HandleClickRevelButton(){
+        if(invenSelect != -1 && !RevelBox.reveling && saram.num[0] == 1 ) {
+            Debug.Log($"RevelOpen : {invenSelect} {invenNumBox[invenSelect]}");
+            RevelWindow.SetActive(true);
+
+            //if(EffectBox.enable[3] != 1) RevelWindow.transform.GetChild(3).gameObject.SetActive(false); // megaphone check
+            //else RevelWindow.transform.GetChild(3).gameObject.SetActive(true); // megaphone check
+
+            RevelBox.reveling = true;
+            RevelBox.RevelOpen(invenSelect);
+            invenSelect = -1;
+            invenSelectObj.SetActive(false);
         }
     }
+
+    public void HandleClickInvenButton(int clickNumber){
+        Debug.Log("HandleClickInvenButton clickNumber=" + clickNumber);
+        if(!RevelBox.reveling && invenNumBox.Count > clickNumber){
+            invenSelect = clickNumber;
+            invenSelectObj.SetActive(true);
+            invenSelectObj.transform.position = this.transform.GetChild(clickNumber).position;
+        }
+    }
+
     public void invenAdd(int num)
     {
         invenNumBox.Add(num);

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class ShopManager : MonoBehaviour
@@ -17,11 +19,16 @@ public class ShopManager : MonoBehaviour
 
     int cardAmount;
 
-    int shop1 = -1, shop2 = -1, shop3 = -1, shop4 = -1;
+    // int shop1 = -1, shop2 = -1, shop3 = -1, shop4 = -1;
     int shopRerollPrice = 10; // base value changes at ChangeCard()
     SpriteRenderer shop1Image, shop2Image, shop3Image, shop4Image;
     SpriteRenderer shop1Stand, shop2Stand, shop3Stand, shop4Stand;
     TextMeshPro shop1Price, shop2Price, shop3Price, shop4Price, shopRerollPriceText;
+
+    private int[] shops = {-1, -1, -1, -1};
+    List<SpriteRenderer> shopImages = new List<SpriteRenderer>();
+    List<SpriteRenderer> shopStands = new List<SpriteRenderer>();
+    List<TextMeshPro> shopPriceTexts = new List<TextMeshPro>();
 
     bool waitspring;
     // Start is called before the first frame update
@@ -36,90 +43,107 @@ public class ShopManager : MonoBehaviour
         invenBox = InvenManager.GetComponent<InvenManager>();
 
         cardAmount = cardBox.price.Length;
-        shop1Image = this.transform.GetChild(1).GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        shop2Image = this.transform.GetChild(2).GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        shop3Image = this.transform.GetChild(3).GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        shop4Image = this.transform.GetChild(4).GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        shop1Stand = this.transform.GetChild(1).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        shop2Stand = this.transform.GetChild(2).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        shop3Stand = this.transform.GetChild(3).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        shop4Stand = this.transform.GetChild(4).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        shop1Price = this.transform.GetChild(1).GetChild(1).gameObject.GetComponent<TextMeshPro>();
-        shop2Price = this.transform.GetChild(2).GetChild(1).gameObject.GetComponent<TextMeshPro>();
-        shop3Price = this.transform.GetChild(3).GetChild(1).gameObject.GetComponent<TextMeshPro>();
-        shop4Price = this.transform.GetChild(4).GetChild(1).gameObject.GetComponent<TextMeshPro>();
-        shopRerollPriceText = this.transform.GetChild(5).GetChild(0).gameObject.GetComponent<TextMeshPro>();
+        // shop1Image = this.transform.GetChild(1).GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+        // shop2Image = this.transform.GetChild(2).GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+        // shop3Image = this.transform.GetChild(3).GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+        // shop4Image = this.transform.GetChild(4).GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+        // shop1Stand = this.transform.GetChild(1).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+        // shop2Stand = this.transform.GetChild(2).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+        // shop3Stand = this.transform.GetChild(3).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+        // shop4Stand = this.transform.GetChild(4).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+        // shop1Price = this.transform.GetChild(1).GetChild(1).gameObject.GetComponent<TextMeshPro>();
+        // shop2Price = this.transform.GetChild(2).GetChild(1).gameObject.GetComponent<TextMeshPro>();
+        // shop3Price = this.transform.GetChild(3).GetChild(1).gameObject.GetComponent<TextMeshPro>();
+        // shop4Price = this.transform.GetChild(4).GetChild(1).gameObject.GetComponent<TextMeshPro>();
+
+        // shopRerollPriceText = this.transform.GetChild(5).GetChild(0).gameObject.GetComponent<TextMeshPro>();
+        shopRerollPriceText = this.transform.Find("ShopReroll").GetChild(0).gameObject.GetComponent<TextMeshPro>();
+        
+        transform.Find("ShopReroll").Find("RerollButton").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(HandleClickShopRerollButton); /* Reroll 버튼과 Handler Method 연결 */
+        transform.Find("Body").Find("ShopHell").Find("BuyButton").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(HandleClickCardHellBuyButton); /* HellBuy 버튼과 Handler Method 연결 */
+        
+        int shopCount = transform.Find("Body").Find("Shops").childCount;
+        for (int i = 0; i < shopCount; i++)
+        {
+            Transform shop = transform.Find("Body").Find("Shops").GetChild(i);
+            shopImages.Add(shop.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>());
+            shopStands.Add(shop.GetChild(0).gameObject.GetComponent<SpriteRenderer>());
+            shopPriceTexts.Add(shop.GetChild(1).gameObject.GetComponent<TextMeshPro>());
+            int index = i;
+            shop.Find("BuyButton").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickCardBuyButton(index));/* Buy 버튼과 Handler Method 연결 */
+            // Debug.Log("ShopManager: " + shop.Find("BuyButton").Find("Button").gameObject + "index=" + index);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButtonDown(0))
-        {
-            Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 0f);
+        // if(Input.GetMouseButtonDown(0))
+        // {
+        //     Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //     RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 0f);
 
-            if(hit.collider != null)
-            {
-                GameObject click_obj = hit.transform.gameObject;
-                if(click_obj.name == "ShopRerollButton") {
-                    resource.money -= shopRerollPrice;
-                    shopRerollPrice *= 3;// increase scale
-                    ChangeCard(true);
-                }
-                if(click_obj.name == "CardHellBuyButton" && hellBox.upcomingHell != -1 && hellBox.hellSprite.sprite == null) {
-                    if(resource.money >= hellBox.hellPrice) {
-                        resource.money -= hellBox.hellPrice;
-                        hellBox.hellSprite.sprite = hellBox.hellSpriteBox[hellBox.upcomingHell];
-                        hellBox.hellPriceText.text = "";
-                    }
-                }
-                if(click_obj.name == "Card1BuyButton" && shop1 != -1) {
-                    if(resource.money >= cardBox.price[shop1]) {
-                        if(BuyCard(shop1)) {
-                            resource.money -= cardBox.price[shop1];
-                            shop1Image.sprite = null;
-                            shop1Stand.sprite = null;
-                            shop1Price.text = "";
-                            shop1 = -1;
-                        }
-                    }
-                }
-                if(click_obj.name == "Card2BuyButton" && shop2 != -1) {
-                    if(resource.money >= cardBox.price[shop2]) {
-                        if(BuyCard(shop2)) {
-                            resource.money -= cardBox.price[shop2];
-                            shop2Image.sprite = null;
-                            shop2Stand.sprite = null;
-                            shop2Price.text = "";
-                            shop2 = -1;
-                        }
-                    }
-                }
-                if(click_obj.name == "Card3BuyButton" && shop3 != -1) {
-                    if(resource.money >= cardBox.price[shop3]) {
-                        if(BuyCard(shop3)) {
-                            resource.money -= cardBox.price[shop3];
-                            shop3Image.sprite = null;
-                            shop3Stand.sprite = null;
-                            shop3Price.text = "";
-                            shop3 = -1;
-                        }
-                    }
-                }
-                if(click_obj.name == "Card4BuyButton" && shop4 != -1) {
-                    if(resource.money >= cardBox.price[shop4]) {
-                        if(BuyCard(shop4)) {
-                            resource.money -= cardBox.price[shop4];
-                            shop4Image.sprite = null;
-                            shop4Stand.sprite = null;
-                            shop4Price.text = "";
-                            shop4 = -1;
-                        }
-                    }
-                }
-            }
-        }
+        //     if(hit.collider != null)
+        //     {
+        //         GameObject click_obj = hit.transform.gameObject;
+        //         if(click_obj.name == "ShopRerollButton") {
+        //             resource.money -= shopRerollPrice;
+        //             shopRerollPrice *= 3;// increase scale
+        //             ChangeCard(true);
+        //         }
+        //         if(click_obj.name == "CardHellBuyButton" && hellBox.upcomingHell != -1 && hellBox.hellSprite.sprite == null) {
+        //             if(resource.money >= hellBox.hellPrice) {
+        //                 resource.money -= hellBox.hellPrice;
+        //                 hellBox.hellSprite.sprite = hellBox.hellSpriteBox[hellBox.upcomingHell];
+        //                 hellBox.hellPriceText.text = "";
+        //             }
+        //         }
+        //         if(click_obj.name == "Card1BuyButton" && shop1 != -1) {
+        //             if(resource.money >= cardBox.price[shop1]) {
+        //                 if(BuyCard(shop1)) {
+        //                     resource.money -= cardBox.price[shop1];
+        //                     shop1Image.sprite = null;
+        //                     shop1Stand.sprite = null;
+        //                     shop1Price.text = "";
+        //                     shop1 = -1;
+        //                 }
+        //             }
+        //         }
+        //         if(click_obj.name == "Card2BuyButton" && shop2 != -1) {
+        //             if(resource.money >= cardBox.price[shop2]) {
+        //                 if(BuyCard(shop2)) {
+        //                     resource.money -= cardBox.price[shop2];
+        //                     shop2Image.sprite = null;
+        //                     shop2Stand.sprite = null;
+        //                     shop2Price.text = "";
+        //                     shop2 = -1;
+        //                 }
+        //             }
+        //         }
+        //         if(click_obj.name == "Card3BuyButton" && shop3 != -1) {
+        //             if(resource.money >= cardBox.price[shop3]) {
+        //                 if(BuyCard(shop3)) {
+        //                     resource.money -= cardBox.price[shop3];
+        //                     shop3Image.sprite = null;
+        //                     shop3Stand.sprite = null;
+        //                     shop3Price.text = "";
+        //                     shop3 = -1;
+        //                 }
+        //             }
+        //         }
+        //         if(click_obj.name == "Card4BuyButton" && shop4 != -1) {
+        //             if(resource.money >= cardBox.price[shop4]) {
+        //                 if(BuyCard(shop4)) {
+        //                     resource.money -= cardBox.price[shop4];
+        //                     shop4Image.sprite = null;
+        //                     shop4Stand.sprite = null;
+        //                     shop4Price.text = "";
+        //                     shop4 = -1;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
         if(seasonManager.season > 0 && seasonManager.season < 2 && waitspring)
         {
             waitspring = false;
@@ -134,6 +158,28 @@ public class ShopManager : MonoBehaviour
         }
     }
 
+    public void HandleClickShopRerollButton(){
+        resource.money -= shopRerollPrice;
+        shopRerollPrice *= 3;// increase scale
+        ChangeCard(true);
+    }
+    public void HandleClickCardHellBuyButton(){
+        if(resource.money >= hellBox.hellPrice && hellBox.upcomingHell != -1 && hellBox.hellSprite.sprite == null) {
+            resource.money -= hellBox.hellPrice;
+            hellBox.hellSprite.sprite = hellBox.hellSpriteBox[hellBox.upcomingHell];
+            hellBox.hellPriceText.text = "";
+        }        
+    }
+    public void HandleClickCardBuyButton(int i) {
+        Debug.Log("ShopManager: HandleClickCardBuyButton: i=" + i);
+        if(shops[i] != -1 && resource.money >= cardBox.price[shops[i]] && BuyCard(shops[i])) {
+            resource.money -= cardBox.price[shops[i]];
+            shopImages[i].sprite = null;
+            shopStands[i].sprite = null;
+            shopPriceTexts[i].text = "";
+            shops[i] = -1;
+        }        
+    }
     void ChangeCard(bool rerolling = false)
     {
         if(!rerolling) {
@@ -154,79 +200,103 @@ public class ShopManager : MonoBehaviour
             if(techBox.enable[i]==0) cardNow.Add(100-cardBox.techStart+i);
         }
         //Debug.Log($"Pool of ChangeCard End : {cardNow[cardNow.Count-1]}");
-        tempValue = Random.Range(0,cardNow.Count);
-        shop1 = cardNow[tempValue];
-        if(shop1<16) {
-            cardNow.RemoveAt(tempValue);
-            shop1Stand.sprite = EffectStand;
-            this.transform.GetChild(1).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
-        }
-        else if(shop1<100-cardBox.techStart) {
-            shop1Stand.sprite = InvenStand;
-            this.transform.GetChild(1).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
-        }
-        else {
-            cardNow.RemoveAt(tempValue);
-            shop1Stand.sprite = TechStand;
-            this.transform.GetChild(1).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
-        }
-        shop1Image.sprite = cardBox.transform.GetChild(shop1).GetComponent<SpriteRenderer>().sprite;
-        tempValue = Random.Range(0,cardNow.Count);
-        shop2 = cardNow[tempValue];
-        if(shop2<16) {
-            cardNow.RemoveAt(tempValue);
-            shop2Stand.sprite = EffectStand;
-            this.transform.GetChild(2).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
-        }
-        else if(shop2<100-cardBox.techStart) {
-            shop2Stand.sprite = InvenStand;
-            this.transform.GetChild(2).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
-        }
-        else {
-            cardNow.RemoveAt(tempValue);
-            shop2Stand.sprite = TechStand;
-            this.transform.GetChild(2).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
-        }
-        shop2Image.sprite = cardBox.transform.GetChild(shop2).GetComponent<SpriteRenderer>().sprite;
-        tempValue = Random.Range(0,cardNow.Count);
-        shop3 = cardNow[tempValue];
-        if(shop3<16) {
-            cardNow.RemoveAt(tempValue);
-            shop3Stand.sprite = EffectStand;
-            this.transform.GetChild(3).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
-        }
-        else if(shop3<100-cardBox.techStart) {
-            shop3Stand.sprite = InvenStand;
-            this.transform.GetChild(3).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
-        }
-        else {
-            cardNow.RemoveAt(tempValue);
-            shop3Stand.sprite = TechStand;
-            this.transform.GetChild(3).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
-        }
-        shop3Image.sprite = cardBox.transform.GetChild(shop3).GetComponent<SpriteRenderer>().sprite;
-        tempValue = Random.Range(0,cardNow.Count);
-        shop4 = cardNow[tempValue];
-        if(shop4<16) {
-            cardNow.RemoveAt(tempValue);
-            shop4Stand.sprite = EffectStand;
-            this.transform.GetChild(4).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
-        }
-        else if(shop4<100-cardBox.techStart) {
-            shop4Stand.sprite = InvenStand;
-            this.transform.GetChild(4).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
-        }
-        else {
-            cardNow.RemoveAt(tempValue);
-            shop4Stand.sprite = TechStand;
-            this.transform.GetChild(4).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
-        }
-        shop4Image.sprite = cardBox.transform.GetChild(shop4).GetComponent<SpriteRenderer>().sprite;
 
-        shop1Price.text = cardBox.price[shop1].ToString();
-        shop2Price.text = cardBox.price[shop2].ToString();
-        shop3Price.text = cardBox.price[shop3].ToString();
-        shop4Price.text = cardBox.price[shop4].ToString();
+        for(int i=0; i<shops.Length; i++) {
+            tempValue = Random.Range(0,cardNow.Count);
+            shops[i] = cardNow[tempValue];
+            if(shops[i]<16) {
+                cardNow.RemoveAt(tempValue);
+                shopStands[i].sprite = EffectStand;
+                this.transform.Find("Body").Find("Shops").GetChild(i).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+            }
+            else if(shops[i]<100-cardBox.techStart) {
+                shopStands[i].sprite = InvenStand;
+                this.transform.Find("Body").Find("Shops").GetChild(i).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
+            }
+            else {
+                cardNow.RemoveAt(tempValue);
+                shopStands[i].sprite = TechStand;
+                this.transform.Find("Body").Find("Shops").GetChild(i).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+            }
+            shopImages[i].sprite = cardBox.transform.GetChild(shops[i]).GetComponent<SpriteRenderer>().sprite;
+            shopPriceTexts[i].text = cardBox.price[shops[i]].ToString();
+        }
+        // tempValue = Random.Range(0,cardNow.Count);
+        // shop1 = cardNow[tempValue];
+        // if(shop1<16) {
+        //     cardNow.RemoveAt(tempValue);
+        //     shop1Stand.sprite = EffectStand;
+        //     this.transform.GetChild(1).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        // }
+        // else if(shop1<100-cardBox.techStart) {
+        //     shop1Stand.sprite = InvenStand;
+        //     this.transform.GetChild(1).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
+        // }
+        // else {
+        //     cardNow.RemoveAt(tempValue);
+        //     shop1Stand.sprite = TechStand;
+        //     this.transform.GetChild(1).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        // }
+        // shop1Image.sprite = cardBox.transform.GetChild(shop1).GetComponent<SpriteRenderer>().sprite;
+
+
+        // tempValue = Random.Range(0,cardNow.Count);
+        // shop2 = cardNow[tempValue];
+        // if(shop2<16) {
+        //     cardNow.RemoveAt(tempValue);
+        //     shop2Stand.sprite = EffectStand;
+        //     this.transform.GetChild(2).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        // }
+        // else if(shop2<100-cardBox.techStart) {
+        //     shop2Stand.sprite = InvenStand;
+        //     this.transform.GetChild(2).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
+        // }
+        // else {
+        //     cardNow.RemoveAt(tempValue);
+        //     shop2Stand.sprite = TechStand;
+        //     this.transform.GetChild(2).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        // }
+        // shop2Image.sprite = cardBox.transform.GetChild(shop2).GetComponent<SpriteRenderer>().sprite;
+        // tempValue = Random.Range(0,cardNow.Count);
+        // shop3 = cardNow[tempValue];
+        // if(shop3<16) {
+        //     cardNow.RemoveAt(tempValue);
+        //     shop3Stand.sprite = EffectStand;
+        //     this.transform.GetChild(3).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        // }
+        // else if(shop3<100-cardBox.techStart) {
+        //     shop3Stand.sprite = InvenStand;
+        //     this.transform.GetChild(3).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
+        // }
+        // else {
+        //     cardNow.RemoveAt(tempValue);
+        //     shop3Stand.sprite = TechStand;
+        //     this.transform.GetChild(3).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        // }
+        // shop3Image.sprite = cardBox.transform.GetChild(shop3).GetComponent<SpriteRenderer>().sprite;
+        // tempValue = Random.Range(0,cardNow.Count);
+        // shop4 = cardNow[tempValue];
+        // if(shop4<16) {
+        //     cardNow.RemoveAt(tempValue);
+        //     shop4Stand.sprite = EffectStand;
+        //     this.transform.GetChild(4).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        // }
+        // else if(shop4<100-cardBox.techStart) {
+        //     shop4Stand.sprite = InvenStand;
+        //     this.transform.GetChild(4).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
+        // }
+        // else {
+        //     cardNow.RemoveAt(tempValue);
+        //     shop4Stand.sprite = TechStand;
+        //     this.transform.GetChild(4).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        // }
+        // shop4Image.sprite = cardBox.transform.GetChild(shop4).GetComponent<SpriteRenderer>().sprite;
+
+
+        // shop1Price.text = cardBox.price[shop1].ToString();
+        // shop2Price.text = cardBox.price[shop2].ToString();
+        // shop3Price.text = cardBox.price[shop3].ToString();
+        // shop4Price.text = cardBox.price[shop4].ToString();
     }
     bool BuyCard(int num)
     {
@@ -261,7 +331,7 @@ public class ShopManager : MonoBehaviour
     public void shopExtend()
     {
         this.transform.GetChild(4).gameObject.SetActive(true);
-        int cnt = 0;
+        int cnt = 1;
         for(float y = 1.9f; y>=-2f; y-=3.41f)
         {
             
@@ -270,10 +340,10 @@ public class ShopManager : MonoBehaviour
                 cnt++;
                 //Debug.Log($"shop{cnt}Expanding : {x} {y}");
                 //this.transform.GetChild(cnt).GetChild(0).localPosition = new Vector3(x,y,0f);
-                this.transform.GetChild(cnt).GetChild(1).localPosition = new Vector3(x+2.84f,y+0.4f,0f);
-                this.transform.GetChild(cnt).GetChild(2).localPosition = new Vector3(x+2.64f,y-1.1f,0f);
-                this.transform.GetChild(cnt).GetChild(0).localPosition = new Vector3(x,y-0.24f,0f);
-                this.transform.GetChild(cnt).GetChild(3).localPosition = new Vector3(x+2.64f,y+0.4f,0f);
+                this.transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(1).localPosition = new Vector3(x+2.84f,y+0.4f,0f);
+                this.transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(2).localPosition = new Vector3(x+2.64f,y-1.1f,0f);
+                this.transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(0).localPosition = new Vector3(x,y-0.24f,0f);
+                this.transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(3).localPosition = new Vector3(x+2.64f,y+0.4f,0f);
             }
         }
     }
