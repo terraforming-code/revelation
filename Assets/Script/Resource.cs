@@ -18,6 +18,7 @@ public class Resource : MonoBehaviour
     EnemyManager enemyBox;
     MessageManager messageBox;
 
+    Transform happyBar;
     TextMeshPro moneyText, foodText, powerText, grainText;
     public int money = 30;
     public float food = 1f, power = 1f, love = 0f, grain = 0f, defense = 1f, farmTech = 1f, fightTech = 1f;
@@ -49,6 +50,7 @@ public class Resource : MonoBehaviour
         foodText = this.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
         powerText = this.transform.GetChild(2).gameObject.GetComponent<TextMeshPro>();
         grainText = this.transform.GetChild(3).gameObject.GetComponent<TextMeshPro>();
+        happyBar = this.transform.GetChild(4);
     }
     void Update()
     {
@@ -57,6 +59,8 @@ public class Resource : MonoBehaviour
         foodText.text = ((int)food).ToString(); 
         powerText.text = power.ToString("F1");
         grainText.text = ((int)grain).ToString();
+        HappyBarUpdate();
+
         if((!waitNewSeason && seasonEat % 12 < seasonBox.season * 3) || (waitNewSeason && seasonBox.season < 0.33))
         {
             float tempPower = 0f;
@@ -301,5 +305,10 @@ public class Resource : MonoBehaviour
 
         }
     }
-    
+    void HappyBarUpdate() {
+        happyBar.GetChild(2).localScale = new Vector3(Mathf.Max(0,(happy-1-1f/15f)*7.5f),Mathf.Max(0,(happy-1-1f/15f)*7.5f),1);
+        happyBar.GetChild(1).localScale = new Vector3(Mathf.Max(0,Mathf.Min(1,(happy-1+1f/15f)*7.5f)),Mathf.Max(0,Mathf.Min(1,(happy-1+1f/15f)*7.5f)),1);
+        happyBar.GetChild(0).localScale = new Vector3(Mathf.Max(0,Mathf.Min(1,(happy-0.8f)*7.5f)),Mathf.Max(0,Mathf.Min(1,(happy-0.8f)*7.5f)),1);
+        
+    }
 }
