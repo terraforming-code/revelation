@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+// using UI = UnityEngine.UI;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System;
@@ -59,13 +60,13 @@ public class MenuManager : MonoBehaviour
     public static void Pause()
     {
         isPaused = true;
-        // AudioManager.muteAudio();
+        AudioManager.PauseBGM();
         Time.timeScale = 0f;
     }
     public static void Resume()
     {
         Time.timeScale = 1f;
-        // AudioManager.unmuteAudio();
+        AudioManager.UnPauseBGM();
         isPaused = false;
     }
     /* MenuWindow */
