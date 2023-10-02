@@ -5,13 +5,14 @@ using TMPro;
 
 public class Resource : MonoBehaviour
 {
-    public GameObject seasonManager, citizenManager, messageManager, enemyManager, buildManager, mammothManager, hellManager, effectManager;
+    public GameObject seasonManager, citizenManager, messageManager, enemyManager, buildManager, mammothManager, hellManager, effectManager, techManager;
     public GameObject BGRainbow;
     HellManager hellBox;
     EffectManager effectBox;
     MammothManager mammothBox;
     BuildingManager buildBox;
     SeasonManager seasonBox;
+    TechManager techBox;
     Saram saram;
     CitizenManager citizenBox;
     EnemyManager enemyBox;
@@ -41,6 +42,7 @@ public class Resource : MonoBehaviour
         citizenBox = citizenManager.GetComponent<CitizenManager>();
         enemyBox = enemyManager.GetComponent<EnemyManager>();
         messageBox = messageManager.GetComponent<MessageManager>();
+        techBox = techManager.GetComponent<TechManager>();
         saram = GetComponent<Saram>();
         
         moneyText = this.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>();
@@ -243,6 +245,11 @@ public class Resource : MonoBehaviour
                 BGRainbow.SetActive(false);
             }
             
+            //ironAge Process by happiness
+            if(techBox.ironAgeStart && happy > 1.19f && techBox.ironAgeComing < 12) {
+                techBox.ironAgePlus();
+            }
+
             seasonEat++;
             waitNewSeason = false;
             if(seasonEat % 12 == 0) waitNewSeason = true;

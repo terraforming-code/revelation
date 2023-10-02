@@ -69,6 +69,7 @@ public class ShopManager : MonoBehaviour
                 }
                 if(click_obj.name == "CardHellBuyButton" && hellBox.upcomingHell != -1 && hellBox.hellSprite.sprite == null) {
                     if(resource.money >= hellBox.hellPrice) {
+                        resource.money -= hellBox.hellPrice;
                         hellBox.hellSprite.sprite = hellBox.hellSpriteBox[hellBox.upcomingHell];
                         hellBox.hellPriceText.text = "";
                     }

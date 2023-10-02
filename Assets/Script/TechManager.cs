@@ -5,6 +5,8 @@ using UnityEngine;
 public class TechManager : MonoBehaviour
 {
     public GameObject Resource, EnemyManager, CitizenManager, CardBox, buildManager, mammothManager, hellManager;
+    public Sprite ironAgeComplete;
+    public GameObject TechIronButton;
     HellManager hellBox;
     MammothManager mammothBox;
     BuildingManager buildBox;
@@ -15,8 +17,9 @@ public class TechManager : MonoBehaviour
     CardBox cardBox;
 
     public int[] enable = new int[]{0,-1,-1,-1,-1,0,-1,0,-1,0,-1,-1,-1};
-
-    bool ironAge = false;
+    
+    public int ironAgeComing = 0;
+    public bool ironAgeStart = false, ironAge = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -55,6 +58,7 @@ public class TechManager : MonoBehaviour
                 enable[6]=0; break;
             case 7:
                 resource.defense = 0.9f;
+                ironAgeStart = true; TechIronButton.SetActive(true);
                 enable[8]=0; break;
             case 8:
                 resource.defense = 0.5f;
@@ -64,6 +68,7 @@ public class TechManager : MonoBehaviour
                 enable[10]=0; enable[12]=0; break;
             case 10:
                 resource.fightTech = 1.3f;
+                ironAgeStart = true; TechIronButton.SetActive(true);
                 enable[11]=0; break;
             case 11:
                 resource.fightTech = 2f;
@@ -113,6 +118,16 @@ public class TechManager : MonoBehaviour
         }
         return false;
     }
-
+    public void ironAgePlus() {
+        ironAgeComing++;
+        this.transform.GetChild(2).GetChild(0).localScale = new Vector3((float)ironAgeComing / 12f,1,1);
+        this.transform.GetChild(2).GetChild(0).localPosition = new Vector3(-4.36f + 4.72f*(float)ironAgeComing / 12f,-3,0);
+        if(ironAgeComing==12)
+        {
+            ironAge=true;
+            this.transform.GetChild(2).GetChild(1).GetComponent<SpriteRenderer>().sprite = ironAgeComplete;
+            this.transform.GetChild(2).GetChild(2).gameObject.SetActive(true);
+        }
+    }
 }
 

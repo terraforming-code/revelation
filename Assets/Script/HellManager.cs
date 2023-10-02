@@ -32,6 +32,7 @@ public class HellManager : MonoBehaviour
     public int hellPrice;
 
     bool eventTriggerOn = false;
+    float hellEventCounter = 0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -55,7 +56,7 @@ public class HellManager : MonoBehaviour
     {
         if(!guardHell)
         {
-            if(!eventTriggerOn) {eventTriggerOn = true; hellEventBox.HellEventStart(upcomingHell);}
+            
             switch(upcomingHell)
             {
                 case 0 :
@@ -105,12 +106,21 @@ public class HellManager : MonoBehaviour
 
         }
         else {
-            if(eventTriggerOn) {eventTriggerOn = false; hellEventBox.HellEventEnd();}
+            hellEventCounter += Time.deltaTime;
+            if(eventTriggerOn && hellEventCounter >= 1f) {
+                eventTriggerOn = false;
+                hellEventBox.HellEventEnd();
+            }
         }
         
     }
     public bool HellGuardCondition()
     {
+        if(!eventTriggerOn && upcomingHell != -1) {
+            eventTriggerOn = true;
+            hellEventCounter = 0f;
+            hellEventBox.HellEventStart(upcomingHell);
+        }
         switch(upcomingHell)
         {
             case 0 :
