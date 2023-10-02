@@ -59,8 +59,13 @@ public class PriestCharChangeManager : MonoBehaviour
         saram = Resource.GetComponent<Saram>();
         opened = true;
         Debug.Log($"priestCharChangeOpen {saram.char1[0][0]} {saram.char2[0][0]} {saram.char3[0][0]}");
-        charChangeText1.text = saram.charTag1[saram.char1[0][0]];
-        charChangeText2.text = saram.charTag2[saram.char2[0][0]];
-        charChangeText3.text = saram.charTag3[saram.char3[0][0]];
+
+        if(saram.char1[0][0]==-10) charChangeText1.text = "God's knight";
+        else if(saram.char1[0][0]==-11) charChangeText1.text = "God's farmer";
+        else charChangeText1.text = saram.charTag1[saram.char1[0][0]];
+        if(saram.char2[0][0]==-8) charChangeText2.text = "Prophet";
+        else charChangeText2.text = saram.charTag2[saram.char2[0][0]];
+        if(saram.char3[0][0]==-9) charChangeText3.text = "Technician";
+        else charChangeText3.text = saram.charTag3[saram.char3[0][0]];
     }
 }

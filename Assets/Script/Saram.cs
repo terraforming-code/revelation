@@ -68,6 +68,12 @@ public class Saram : MonoBehaviour
                 case 5 :
                     fighting[i][j] *= 0.5f;
                     break;
+                case -10 : // god's knight
+                    fighting[i][j] = 2.5f;
+                    break;
+                case -11 : // god's farmer
+                    farming[i][j] = 2.5f;
+                    break;
 
             }
         }
@@ -97,6 +103,9 @@ public class Saram : MonoBehaviour
                     for(int k = 0;k < char1[i].Count-1;k++)
                         holy[i][k] = Mathf.Min(holy[i][k]*1.1f,1);
                     break; // agape
+                case -8 :
+                    holy[i][j] = 1f;
+                    break;
 
             }
         }
