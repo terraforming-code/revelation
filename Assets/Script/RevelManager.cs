@@ -91,6 +91,14 @@ public class RevelManager : MonoBehaviour
         }
         
     }
+    public void HandleClickConfirm()
+    {
+
+    }
+    public void HandleClickCancel()
+    {
+        
+    }
     public void RevelOpen(int num)
     {
         
