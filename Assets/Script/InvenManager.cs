@@ -115,6 +115,10 @@ public class InvenManager : MonoBehaviour
         }
     }
 
+    public void HandleClickCancelButton(){
+        
+    }
+
     public void invenAdd(int num)
     {
         invenNumBox.Add(num);
