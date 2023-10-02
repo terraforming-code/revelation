@@ -330,20 +330,20 @@ public class ShopManager : MonoBehaviour
     }
     public void shopExtend()
     {
-        this.transform.GetChild(4).gameObject.SetActive(true);
-        int cnt = 1;
+        this.transform.Find("Body").Find("Shops").GetChild(3).gameObject.SetActive(true);
+        int cnt = 0;
         for(float y = 1.9f; y>=-2f; y-=3.41f)
         {
             
             for(float x = -2.14f; x<=6f; x+=5.23f)
             {
-                cnt++;
                 //Debug.Log($"shop{cnt}Expanding : {x} {y}");
                 //this.transform.GetChild(cnt).GetChild(0).localPosition = new Vector3(x,y,0f);
                 this.transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(1).localPosition = new Vector3(x+2.84f,y+0.4f,0f);
                 this.transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(2).localPosition = new Vector3(x+2.64f,y-1.1f,0f);
                 this.transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(0).localPosition = new Vector3(x,y-0.24f,0f);
                 this.transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(3).localPosition = new Vector3(x+2.64f,y+0.4f,0f);
+                cnt++;
             }
         }
     }
