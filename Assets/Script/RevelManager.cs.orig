@@ -34,9 +34,16 @@ public class RevelManager : MonoBehaviour
         messageBox = messageManager.GetComponent<MessageManager>();
         MegaphoneButton = this.transform.GetChild(3).gameObject;
         revelPercentText = this.transform.GetChild(4).gameObject.GetComponent<TextMeshPro>();
+<<<<<<< HEAD
+
+        transform.GetChild(1).GetChild(0).GetComponent<Button>().onClick.AddListener(HandleClickConfirmButton);
+        transform.GetChild(2).GetChild(0).GetComponent<Button>().onClick.AddListener(HandleClickCancelButton);
+
+=======
         this.transform.GetChild(1).Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickConfirmButton()); /* Confirm 버튼(GetChild(1)) 과 Handler Method 연결 */
         this.transform.GetChild(2).Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickCancelButton()); /* Cancel 버튼(GetChild(2)) 과 Handler Method 연결 */
         this.transform.GetChild(3).Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickMegaphoneButton()); /* Megaphone 버튼(GetChild(3)) 과 Handler Method 연결 */
+>>>>>>> refactor/uiButton
     }
 
     // Update is called once per frame
@@ -138,6 +145,46 @@ public class RevelManager : MonoBehaviour
         revelPercentText.text = Mathf.Round(revelPercent*100).ToString()+"%   "+Mathf.Round(100-revelPercent*100).ToString()+"%";
         MegaphoneButton.SetActive(false);
     }
+
+    public void HandleClickConfirmButton()
+    {
+        if(invenBox.invenNumBox[pivot]>=100 && !techBox.techCondition(invenBox.invenNumBox[pivot]))
+        {
+            messageBox.messageAdd("Insufficient Condition to reveal technology");
+        }
+        else {
+            if(Random.Range(0f,1f) <= revelPercent) // Successed
+            {
+                cards.skill(invenBox.invenNumBox[pivot]);
+                if(invenBox.invenNumBox[pivot]>=100) {
+                    techBox.techUnlock(invenBox.invenNumBox[pivot]);
+                }
+                saram.HolyAdd(0.05f);
+                messageBox.messageAdd("Revealed");
+            }
+            else
+            {
+                if(invenBox.invenNumBox[pivot]>=100) {
+                    techBox.enable[invenBox.invenNumBox[pivot]-100] = 0;
+                }
+                messageBox.messageAdd("Unrevealed");
+            }
+
+            invenBox.invenNumBox.RemoveAt(pivot);
+            invenBox.invenRearrange();
+            reveling = false;
+            if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
+            this.gameObject.SetActive(false);
+        }
+    }
+
+    public void HandleClickCancelButton()
+    {
+        reveling = false;
+        if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
+        this.gameObject.SetActive(false);     
+    }
+
     public void RevelOpen(int num)
     {
         

@@ -26,9 +26,9 @@ public class InvenManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        invenSelectObj = this.transform.GetChild(8).gameObject;
+        invenSelectObj = this.transform.GetChild(8).gameObject; /* SelectedCard (GetChild(8)) */
         cardBox = CardBox.GetComponent<CardBox>();
-        RevelBox = RevelWindow.GetComponent<RevelManager>();
+        RevelBox = this.transform.GetChild(11).gameObject.GetComponent<RevelManager>(); /* RevelWindow (GetChild(11)) */
         EffectBox = EffectWindow.GetComponent<EffectManager>();
         saram = Resource.GetComponent<Saram>();
         for(int i = 0; i < 8; i++) {
@@ -36,8 +36,8 @@ public class InvenManager : MonoBehaviour
             invenBlock[i] = this.transform.GetChild(i).GetChild(0).gameObject.GetComponent<SpriteRenderer>();    
             this.transform.GetChild(i).GetChild(1).Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickInvenButton(index)); /* Inven 버튼과 Handler Method 연결 */
         }
-        this.transform.GetChild(9).Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickRevelButton()); /* Revel 버튼과 Handler Method 연결 */
-        this.transform.GetChild(14).Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickRemoveButton()); /* Remove 버튼과 Handler Method 연결 */
+        this.transform.GetChild(9).Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(HandleClickRevelButton); /* Revel버튼 (GetChild(9)) 과 Handler Method 연결 */
+        this.transform.GetChild(10).Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(HandleClickRemoveButton); /* Remove버튼 (GetChild(10)) 과 Handler Method 연결 */
     }
     void Update()
     {
@@ -94,19 +94,26 @@ public class InvenManager : MonoBehaviour
     }
 
     public void HandleClickRevelButton(){
-        Debug.Log("InvenManager: HandleClickRevelButton");
-        if(invenSelect != -1 && !RevelBox.reveling && saram.num[0] == 1 ) {
-            Debug.Log($"RevelOpen : {invenSelect} {invenNumBox[invenSelect]}");
-            RevelWindow.SetActive(true);
+        Debug.Log("HandleClickRevelButton ");
+        if(invenSelect != -1 && !RevelBox.reveling){
+            if(saram.num[0] == 1)
+            {
+                Debug.Log($"RevelOpen : {invenSelect} {invenNumBox[invenSelect]}");
+                RevelWindow.SetActive(true);
 
-            //if(EffectBox.enable[3] != 1) RevelWindow.transform.GetChild(3).gameObject.SetActive(false); // megaphone check
-            //else RevelWindow.transform.GetChild(3).gameObject.SetActive(true); // megaphone check
+                //if(EffectBox.enable[3] != 1) RevelWindow.transform.GetChild(3).gameObject.SetActive(false); // megaphone check
+                //else RevelWindow.transform.GetChild(3).gameObject.SetActive(true); // megaphone check
 
-            RevelBox.reveling = true;
-            RevelBox.RevelOpen(invenSelect);
-            invenSelect = -1;
-            invenSelectObj.SetActive(false);
-        }
+                RevelBox.reveling = true;
+                RevelBox.RevelOpen(invenSelect);
+                invenSelect = -1;
+                invenSelectObj.SetActive(false);
+            }
+            else
+            {
+                Debug.Log("There's no preist. To revel, you should promote one of the citizens as priest at citizen window.");
+            }
+        } 
     }
     public void HandleClickInvenButton(int clickNumber){
         Debug.Log("HandleClickInvenButton clickNumber=" + clickNumber);
@@ -116,9 +123,10 @@ public class InvenManager : MonoBehaviour
             invenSelectObj.transform.position = this.transform.GetChild(clickNumber).position;
         }
     }
+
     public void HandleClickRemoveButton(){
-        Debug.Log("InvenManager: HandleClickRemoveButton");
-        if(invenSelect != -1 && !RevelBox.reveling){
+        Debug.Log("HandleClickRemoveButton");
+        if(invenSelect != -1 && !RevelBox.reveling) {
             invenNumBox.RemoveAt(invenSelect);
             invenRearrange();
             invenSelect = -1;
