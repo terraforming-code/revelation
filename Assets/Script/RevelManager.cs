@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class RevelManager : MonoBehaviour
@@ -33,71 +34,109 @@ public class RevelManager : MonoBehaviour
         messageBox = messageManager.GetComponent<MessageManager>();
         MegaphoneButton = this.transform.GetChild(3).gameObject;
         revelPercentText = this.transform.GetChild(4).gameObject.GetComponent<TextMeshPro>();
+        this.transform.GetChild(1).Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickConfirmButton()); /* Confirm 버튼(GetChild(1)) 과 Handler Method 연결 */
+        this.transform.GetChild(2).Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickCancelButton()); /* Cancel 버튼(GetChild(2)) 과 Handler Method 연결 */
+        this.transform.GetChild(3).Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickMegaphoneButton()); /* Megaphone 버튼(GetChild(3)) 과 Handler Method 연결 */
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        // if(Input.GetMouseButtonDown(0))
+        // {
+        //     Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //     RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 0f);
+
+        //     if(hit.collider != null)
+        //     {
+        //         GameObject click_obj = hit.transform.gameObject;
+        //         if(click_obj.name == "RevelMegaphone") {
+        //             resource.money--; // * megaphone price *
+        //             revelPercent = Mathf.Min(revelPercent+0.1f,1f); // *megaphone effect*
+        //             revelPercentText.text = Mathf.Round(revelPercent*100).ToString()+"%   "+Mathf.Round(100-revelPercent*100).ToString()+"%";
+        //             MegaphoneButton.SetActive(false);
+        //         }
+        //         if(click_obj.name == "RevelConfirm") {
+        //             if(invenBox.invenNumBox[pivot]>=100 && !techBox.techCondition(invenBox.invenNumBox[pivot]))
+        //             {
+        //                 messageBox.messageAdd("Insufficient Condition to reveal technology");
+        //             }
+        //             else {
+        //                 if(Random.Range(0f,1f) <= revelPercent) // Successed
+        //                 {
+        //                     cards.skill(invenBox.invenNumBox[pivot]);
+        //                     if(invenBox.invenNumBox[pivot]>=100) {
+        //                         techBox.techUnlock(invenBox.invenNumBox[pivot]);
+        //                     }
+        //                     saram.HolyAdd(0.05f);
+        //                     messageBox.messageAdd("Revealed");
+        //                 }
+        //                 else
+        //                 {
+        //                     if(invenBox.invenNumBox[pivot]>=100) {
+        //                         techBox.enable[invenBox.invenNumBox[pivot]-100] = 0;
+        //                     }
+        //                     messageBox.messageAdd("Unrevealed");
+        //                 }
+
+        //                 invenBox.invenNumBox.RemoveAt(pivot);
+        //                 invenBox.invenRearrange();
+        //                 reveling = false;
+        //                 if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
+        //                 this.gameObject.SetActive(false);
+        //             }
+        //         }
+        //         if(click_obj.name == "RevelCancel") {
+        //             reveling = false;
+        //             if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
+        //             this.gameObject.SetActive(false);                   
+        //         }
+        //     }
+        // }        
+    }
+    public void HandleClickConfirmButton()
+    {
+        if(invenBox.invenNumBox[pivot]>=100 && !techBox.techCondition(invenBox.invenNumBox[pivot]))
         {
-            Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 0f);
-
-            if(hit.collider != null)
-            {
-                GameObject click_obj = hit.transform.gameObject;
-                if(click_obj.name == "RevelMegaphone") {
-                    resource.money--; // * megaphone price *
-                    revelPercent = Mathf.Min(revelPercent+0.1f,1f); // *megaphone effect*
-                    revelPercentText.text = Mathf.Round(revelPercent*100).ToString()+"%   "+Mathf.Round(100-revelPercent*100).ToString()+"%";
-                    MegaphoneButton.SetActive(false);
-                }
-                if(click_obj.name == "RevelConfirm") {
-                    if(invenBox.invenNumBox[pivot]>=100 && !techBox.techCondition(invenBox.invenNumBox[pivot]))
-                    {
-                        messageBox.messageAdd("Insufficient Condition to reveal technology");
-                    }
-                    else {
-                        if(Random.Range(0f,1f) <= revelPercent) // Successed
-                        {
-                            cards.skill(invenBox.invenNumBox[pivot]);
-                            if(invenBox.invenNumBox[pivot]>=100) {
-                                techBox.techUnlock(invenBox.invenNumBox[pivot]);
-                            }
-                            saram.HolyAdd(0.05f);
-                            messageBox.messageAdd("Revealed");
-                        }
-                        else
-                        {
-                            if(invenBox.invenNumBox[pivot]>=100) {
-                                techBox.enable[invenBox.invenNumBox[pivot]-100] = 0;
-                            }
-                            messageBox.messageAdd("Unrevealed");
-                        }
-
-                        invenBox.invenNumBox.RemoveAt(pivot);
-                        invenBox.invenRearrange();
-                        reveling = false;
-                        if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
-                        this.gameObject.SetActive(false);
-                    }
-                }
-                if(click_obj.name == "RevelCancel") {
-                    reveling = false;
-                    if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
-                    this.gameObject.SetActive(false);                   
-                }
-            }
+            messageBox.messageAdd("Insufficient Condition to reveal technology");
         }
-        
-    }
-    public void HandleClickConfirm()
-    {
+        else {
+            if(Random.Range(0f,1f) <= revelPercent) // Successed
+            {
+                cards.skill(invenBox.invenNumBox[pivot]);
+                if(invenBox.invenNumBox[pivot]>=100) {
+                    techBox.techUnlock(invenBox.invenNumBox[pivot]);
+                }
+                saram.HolyAdd(0.05f);
+                messageBox.messageAdd("Revealed");
+            }
+            else
+            {
+                if(invenBox.invenNumBox[pivot]>=100) {
+                    techBox.enable[invenBox.invenNumBox[pivot]-100] = 0;
+                }
+                messageBox.messageAdd("Unrevealed");
+            }
 
+            invenBox.invenNumBox.RemoveAt(pivot);
+            invenBox.invenRearrange();
+            reveling = false;
+            if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
+            this.gameObject.SetActive(false);
+        }
     }
-    public void HandleClickCancel()
+    public void HandleClickCancelButton()
     {
-        
+        reveling = false;
+        if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
+        this.gameObject.SetActive(false);       
+    }
+    public void HandleClickMegaphoneButton()
+    {
+        resource.money--; // * megaphone price *
+        revelPercent = Mathf.Min(revelPercent+0.1f,1f); // *megaphone effect*
+        revelPercentText.text = Mathf.Round(revelPercent*100).ToString()+"%   "+Mathf.Round(100-revelPercent*100).ToString()+"%";
+        MegaphoneButton.SetActive(false);
     }
     public void RevelOpen(int num)
     {
