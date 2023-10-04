@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Caveman : MonoBehaviour
 {
+    public GameObject citizenBriefTab;
+    SpriteRenderer citizenBriefTabHead, citizenBriefTabFace;
+    TextMeshPro citizenBriefTabName, citizenBriefTabJob;
     Animator animator;
-
+    public string nickname;
     public int code, job, dir;
     bool stopping;
     float stopPos, stopTime, stopCounter=0f;
@@ -16,6 +20,11 @@ public class Caveman : MonoBehaviour
         animator = GetComponent<Animator>();
         stopPos=Random.Range(-6f,6f);
         stopTime=Random.Range(1f,3f);
+
+        citizenBriefTabHead = citizenBriefTab.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();
+        citizenBriefTabFace = citizenBriefTab.transform.GetChild(0).GetChild(1).GetComponent<SpriteRenderer>();
+        citizenBriefTabName = citizenBriefTab.transform.GetChild(1).GetComponent<TextMeshPro>();
+        citizenBriefTabJob = citizenBriefTab.transform.GetChild(2).GetComponent<TextMeshPro>();
     }
 
     // Update is called once per frame
@@ -42,5 +51,23 @@ public class Caveman : MonoBehaviour
         {
             this.transform.parent.GetComponent<CitizenMotionManager>().CavemanDestroy(code);
         }
+    }
+    void OnMouseEnter()
+    {
+        citizenBriefTabHead.sprite = this.transform.GetChild(2).GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().sprite;
+        citizenBriefTabFace.sprite = this.transform.GetChild(2).GetChild(0).GetChild(1).GetComponent<SpriteRenderer>().sprite;
+        citizenBriefTab.SetActive(true);
+        citizenBriefTabName.text = nickname;
+        switch(job)
+        {
+            case 0: citizenBriefTabJob.text = "Priest"; break;
+            case 1: citizenBriefTabJob.text = "Farmer"; break;
+            case 2: citizenBriefTabJob.text = "Warrior"; break;
+        }
+        
+    }
+    void OnMouseExit()
+    {
+        citizenBriefTab.SetActive(false);
     }
 }

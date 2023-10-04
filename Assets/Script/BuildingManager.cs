@@ -10,6 +10,8 @@ public class BuildingManager : MonoBehaviour
     SeasonManager seasonBox;
     public float[] build = new float[]{-1f,-1f,-1f,-1f,-1f,-1f,-1f};
     GameObject[] buildObj = new GameObject[]{null,null,null,null,null,null,null};
+
+    public int buildMouseFocus = -1; // related with BuildingBriefTab
     
     float Bedishappy = 0f, Homeislove = 0f;
     void Start()

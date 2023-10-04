@@ -7,6 +7,7 @@ public class CitizenMotionManager : MonoBehaviour
     public GameObject Resource;
     Saram saram;
     public GameObject CavemanObj;
+    public GameObject CitizenBriefTab;
     public List<GameObject> CavemanObjList = new List<GameObject>();
     public List<int> CavemanCodeList = new List<int>();
     public int[] num = new int[]{0,0,0};
@@ -43,7 +44,9 @@ public class CitizenMotionManager : MonoBehaviour
             if(!zungbok) {
                 GameObject CavemanObjTemp = Instantiate(CavemanObj, this.transform);
                 int dirTemp = Random.Range(0,2)*2-1; // -1 : <- , 1 : ->
+                CavemanObjTemp.GetComponent<Caveman>().citizenBriefTab = CitizenBriefTab;
                 CavemanObjTemp.GetComponent<Caveman>().code = saram.code[job][i];
+                CavemanObjTemp.GetComponent<Caveman>().nickname = saram.nickname[job][i];
                 CavemanObjTemp.GetComponent<Caveman>().dir = dirTemp;
                 CavemanObjTemp.GetComponent<Caveman>().job = job;
                 CavemanObjTemp.transform.localPosition = new Vector3(dirTemp*-11,0,0);

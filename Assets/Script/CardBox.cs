@@ -43,7 +43,7 @@ public class CardBox : MonoBehaviour
         }
         if(i == 3)
         {
-            objInvenWindow.transform.GetChild(10).GetChild(3).gameObject.SetActive(true);
+            objInvenWindow.transform.GetChild(11).GetChild(3).gameObject.SetActive(true);
         }
         if(i == 4)
         {
