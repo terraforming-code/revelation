@@ -6,12 +6,10 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using System;
 
-public class MenuManager : MonoBehaviour
+public class MenuWindow : Window
 {
-    private static MenuManager instance;
-    public static MenuManager Instance => instance;
+    public override string WindowName{get{return "Menu";}}
     private static bool isPaused; /* 게임 일시정지 여부 */
-    private static GameObject menuWindow; /* 메뉴 창 */
 
     /* Pages */
     private static GameObject currentPage; /* 현재 활성화된 페이지: 항상 1개만 활성화 */
@@ -21,10 +19,10 @@ public class MenuManager : MonoBehaviour
     /* Buttons */
     private Button ResumeButton, SettingButton, SaveButton, QuitButton;
 
-    void Awake()
+    public override void Awake()
     {
-        menuWindow = transform.Find("MenuWindow").gameObject;
-        menuPage = menuWindow.transform.Find("MenuPage").gameObject;
+        base.Awake();
+        menuPage = transform.Find("MenuPage").gameObject;
 
         var buttonToHandler = new Dictionary<string, UnityAction>(){
             {"SettingButton", handleClickSettingButton},
@@ -36,27 +34,27 @@ public class MenuManager : MonoBehaviour
         {
             child.Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(buttonToHandler[child.name]);
         }
-        
 
-        foreach (Transform child in menuWindow.transform) /* MenuWindow 의 페이지들 모두 비활성화하고 시작. */
+        foreach (Transform child in transform) /* 각 페이지의 BackButton 을 클릭 시 메뉴 페이지로 돌아가도록 Handler Method 연결. */
         {
             Transform head = child.Find("Head");
-            head.Find("CloseButton").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(Close);
+            // head.Find("CloseButton").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(Close);
             head.Find("BackButton")?.Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>OpenPage("MenuPage"));
-            child.gameObject.SetActive(false);
         }
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        Debug.Log("MenuManager: Start");
         isPaused = false;
     }
-
-    // Update is called once per frame
-    void Update()
+    public override void Start()
     {
+        base.Start();
+        Pause();
+        Debug.Log("MenuManager: Start");
         
+        /* Menu 페이지 열기 */
+        currentPage = menuPage;
+        menuPage.SetActive(true);
+    }
+    void Update()
+    {        
     }
     /* Pause & Resume */
     public static void Pause()
@@ -71,7 +69,7 @@ public class MenuManager : MonoBehaviour
         AudioManager.UnPauseBGM();
         isPaused = false;
     }
-    /* MenuWindow */
+    /* Menutransform */
     public void handleClickMenuButton()
     {
         if(isPaused) /* Menu 창 닫고 Resume */
@@ -79,35 +77,38 @@ public class MenuManager : MonoBehaviour
             Close();
         }
         
-        else /*  Pause 하고 Menu 창 열기 */
-        {
-            Open();
-        } 
+        // else /*  Pause 하고 Menu 창 열기 */
+        // {
+        //     Open();
+        // } 
     }
-    public static void Open()
-    {
-        Debug.Log("MenuManager: OpenMenuWindow");
-        Pause();
-        menuWindow.transform.position = new Vector3(0,0,0);
-        menuWindow.SetActive(true);
+    // public static void Open()
+    // {
+    //     Debug.Log("MenuManager: OpenMenutransform");
+    //     Pause();
+    //     transform.position = new Vector3(0,0,0);
+    //     gameObject.SetActive(true);
 
-        /* Menu 페이지 열기 */
-        currentPage = menuPage;
-        menuPage.SetActive(true);
-    }
-    public static void Close()
+    //     /* Menu 페이지 열기 */
+    //     currentPage = menuPage;
+    //     menuPage.SetActive(true);
+    // }
+    // public override void Open()
+    // {
+    // }
+    public override void Close()
     {
         /* currentPage 초기화 */
         currentPage.SetActive(false);
         currentPage = null;
 
-        menuWindow.SetActive(false);
+        gameObject.SetActive(false);
         Resume();
     }
     /* Pages */
-    public static void OpenPage(string pageName)
+    public void OpenPage(string pageName)
     {
-        GameObject page = menuWindow.transform.Find(pageName).gameObject;
+        GameObject page = transform.Find(pageName).gameObject;
         if(currentPage != page)
         {
             currentPage.SetActive(false);
@@ -116,19 +117,19 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    public static void OpenMenuPage() /* 딜레이를 주는 Invoke() Call 을 위해 parameter 가 없는 함수가 필요함. */
+    public void OpenMenuPage() /* 딜레이를 주는 Invoke() Call 을 위해 parameter 가 없는 함수가 필요함. */
     {
         OpenPage("MenuPage");
     }
-    public static void handleClickSettingButton()
+    public void handleClickSettingButton()
     {
         OpenPage("SettingPage");
     }
-    public static void handleClickSaveButton()
+    public void handleClickSaveButton()
     {
         OpenPage("SavePage");
     }
-    public static void handleClickQuitButton()
+    public void handleClickQuitButton()
     {
         OpenPage("ConfirmQuitPage");
     }
@@ -149,11 +150,11 @@ public class MenuManager : MonoBehaviour
     //     Debug.Log($"MenuManager=OnEscape(): isPaused = {isPaused}");
     //     if(isPaused)
     //     {
-    //         CloseMenuWindow();
+    //         CloseMenutransform();
     //     }
     //     else
     //     {
-    //         OpenMenuWindow();
+    //         OpenMenutransform();
     //     }
     // }
 }

@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+public class AudioManager : Singleton<AudioManager>
 {
-    public static AudioManager Instance;
-
     /* AudioSources */
     [SerializeField] private AudioSource mainBGM;
     [SerializeField] private AudioSource buttonClickSound;
@@ -17,24 +15,21 @@ public class AudioManager : MonoBehaviour
     public static float MasterVolume => masterVolume;
     private static float masterVolume = 1f;
 
-    void Awake()
+    public override void Awake()
     {
-        Instance = this; 
+        base.Awake();
         UnmuteAudio();
 
         /* SerializeField 를 static 변수에 적용 */
         ButtonClickSound = buttonClickSound; 
-        MainBGM = mainBGM; 
-
+        MainBGM = mainBGM;
         // MainBGM.Play();
         // ButtonClickSound.Play();
+ 
     }
-    // Start is called before the first frame update
     void Start()
     {
-
     }
-    // Update is called once per frame
     void Update()
     {
         

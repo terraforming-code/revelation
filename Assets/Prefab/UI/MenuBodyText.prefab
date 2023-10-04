@@ -7,9 +7,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2085107657046081473, guid: 7b805422601f5c3479727050a80da03a, type: 3}
+      propertyPath: m_fontSize
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 2085107657046081473, guid: 7b805422601f5c3479727050a80da03a, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 0.35
+      objectReference: {fileID: 0}
     - target: {fileID: 9073197282155708981, guid: 7b805422601f5c3479727050a80da03a, type: 3}
       propertyPath: m_Name
-      value: Text
+      value: MenuBodyText
       objectReference: {fileID: 0}
     - target: {fileID: 9107049052137885785, guid: 7b805422601f5c3479727050a80da03a, type: 3}
       propertyPath: m_Pivot.x

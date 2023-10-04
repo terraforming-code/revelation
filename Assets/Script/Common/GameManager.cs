@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement; /* For Scene move */
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    private static bool isPaused; /* Pause 여부 */
+    public static bool IsPaused => isPaused;
 
     void Awake()
     {
@@ -25,5 +27,18 @@ public class GameManager : MonoBehaviour
     public static void LoadScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
+    }
+    /* Pause & Resume */
+    public static void Pause()
+    {
+        isPaused = true;
+        AudioManager.PauseBGM();
+        Time.timeScale = 0f;
+    }
+    public static void Resume()
+    {
+        Time.timeScale = 1f;
+        AudioManager.UnPauseBGM();
+        isPaused = false;
     }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using System.Linq;
 using UnityEngine;
 // using UnityEngine.Device;
 using Newtonsoft.Json;
@@ -9,6 +10,7 @@ using Newtonsoft.Json;
 public static class SaveManager
 {
     private static readonly string saveFolder = Application.persistentDataPath +"/GameData";
+    public static string SaveFolder => saveFolder;
 
     /* profileName에 해당하는 게임 데이터 json 파일을 찾아 SaveProfile 오브젝트로 로드 */
     public static SaveProfile<T> Load<T>(string profileName) where T: SaveProfileData
@@ -50,6 +52,11 @@ public static class SaveManager
     public static void LoadGame(string profileName)
     {   
         SaveProfile<GameSaveData> saveProfile = Load<GameSaveData>(profileName); 
+    }
+
+    public static IEnumerable<string> GetFiles()
+    {
+        return from file in Directory.EnumerateFiles(SaveManager.SaveFolder) select file;
     }
 
 }
