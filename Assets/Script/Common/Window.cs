@@ -16,8 +16,9 @@ public abstract class Window : MonoBehaviour
     //     }
     // }
     public virtual string WindowName {get; set;}
-    public virtual void Awake(){
+    public GameObject CurrentPage; /* 현재 활성화된 페이지: 항상 1개만 활성화 */
 
+    public virtual void Awake(){
         WindowManager.Instance.Add(WindowName, gameObject); /* Window를 Window Manager에 등록 */  
         
         foreach (Transform child in transform) /* Window 의 페이지들 모두 1. 비활성화 2. Close 버튼에 Handler 연결. */
@@ -25,23 +26,30 @@ public abstract class Window : MonoBehaviour
             child.Find("Head")?.Find("CloseButton").Find("Button")?.gameObject.GetComponent<Button>().onClick.AddListener(Close);
             child.gameObject.SetActive(false);
         }
-    }
-    public virtual void Start()
-    {
-        transform.position = new Vector3(0,0,0);
         transform.GetChild(0).gameObject.SetActive(true); /* 배경 활성화 */
-        transform.GetChild(1).gameObject.SetActive(true); /* 첫번째 페이지 열기 */
+    }
+    void Start()
+    {
+        gameObject.SetActive(false);
     }
     void Update()
     {        
     }
-    // public void Open()
-    // {
-    //     Debug.Log("WindowManager: Open");
-    //     gameObject.SetActive(true);
-    // }
+    public virtual void Open()
+    {
+        gameObject.SetActive(true);
+        transform.position = new Vector3(0,0,0);
+
+        /* 첫번째 페이지 열기 */
+        CurrentPage = transform.GetChild(1).gameObject;
+        CurrentPage.SetActive(true); 
+    }
     public virtual void Close()
     {
+        /* CurrentPage 초기화 */
+        CurrentPage.SetActive(false);
+        CurrentPage = null;
 
+        gameObject.SetActive(false);
     }
 }

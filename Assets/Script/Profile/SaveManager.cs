@@ -51,7 +51,16 @@ public static class SaveManager
     /* 저장된 게임 로드. 게임 중 로드 UI에 의해 호출됨. */
     public static void LoadGame(string profileName)
     {   
-        SaveProfile<GameSaveData> saveProfile = Load<GameSaveData>(profileName); 
+        /* SampleScene load한 후 데이터가 적용될 때까지 Pause */
+        GameManager.LoadScene("SampleScene");
+        GameManager.Pause();
+
+        /* 저장된 데이터 로드 및 적용 */
+        SaveProfile<GameSaveData> saveProfile = Load<GameSaveData>(profileName); /* 저장된 게임 데이터 Load */
+
+
+        /* 데이터 적용이 끝났으므로 Resume */
+        GameManager.Resume();
     }
 
     public static IEnumerable<string> GetFiles()

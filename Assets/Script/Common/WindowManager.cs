@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class WindowManager : Singleton<WindowManager>
 {
@@ -28,7 +29,10 @@ public class WindowManager : Singleton<WindowManager>
     public void Open(string windowName)
     {
         if(nameToWindow.ContainsKey(windowName))
-            nameToWindow[windowName].SetActive(true);
+            nameToWindow[windowName].GetComponent<Window>().Open();
+            // nameToWindow[windowName].SetActive(true);
+        else
+            throw new Exception($"window {windowName} is not registered.");
     }
     public void Add(string windowName, GameObject window)
     {

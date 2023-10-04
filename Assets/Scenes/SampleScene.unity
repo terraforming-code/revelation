@@ -21567,6 +21567,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1125553877539158688, guid: adf25fce0f108004ca2cb301c046bb87, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2047188349158275338, guid: adf25fce0f108004ca2cb301c046bb87, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -21695,6 +21699,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd2691e641638f94880b3f17d67f3375, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentPage: {fileID: 0}
 --- !u!1 &1466281790
 GameObject:
   m_ObjectHideFlags: 0

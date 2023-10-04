@@ -12,7 +12,6 @@ public class MenuWindow : Window
     private static bool isPaused; /* 게임 일시정지 여부 */
 
     /* Pages */
-    private static GameObject currentPage; /* 현재 활성화된 페이지: 항상 1개만 활성화 */
     private static GameObject menuPage; /* 기본 Menu 페이지 */
     // private GameObject confirmQuitPage; /* Quit Conifrm 창 */
 
@@ -34,27 +33,17 @@ public class MenuWindow : Window
         {
             child.Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(buttonToHandler[child.name]);
         }
-
         foreach (Transform child in transform) /* 각 페이지의 BackButton 을 클릭 시 메뉴 페이지로 돌아가도록 Handler Method 연결. */
         {
-            Transform head = child.Find("Head");
-            // head.Find("CloseButton").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(Close);
-            head.Find("BackButton")?.Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>OpenPage("MenuPage"));
+            child.Find("Head")?.Find("BackButton").Find("Button")?.gameObject.GetComponent<Button>().onClick.AddListener(OpenMenuPage);
         }
         isPaused = false;
     }
-    public override void Start()
+    public override void Open()
     {
-        base.Start();
+        Debug.Log("MenuManager: Open");
         Pause();
-        Debug.Log("MenuManager: Start");
-        
-        /* Menu 페이지 열기 */
-        currentPage = menuPage;
-        menuPage.SetActive(true);
-    }
-    void Update()
-    {        
+        base.Open();
     }
     /* Pause & Resume */
     public static void Pause()
@@ -90,7 +79,7 @@ public class MenuWindow : Window
     //     gameObject.SetActive(true);
 
     //     /* Menu 페이지 열기 */
-    //     currentPage = menuPage;
+    //     CurrentPage = menuPage;
     //     menuPage.SetActive(true);
     // }
     // public override void Open()
@@ -98,22 +87,17 @@ public class MenuWindow : Window
     // }
     public override void Close()
     {
-        /* currentPage 초기화 */
-        currentPage.SetActive(false);
-        currentPage = null;
-
-        gameObject.SetActive(false);
         Resume();
     }
     /* Pages */
     public void OpenPage(string pageName)
     {
         GameObject page = transform.Find(pageName).gameObject;
-        if(currentPage != page)
+        if(CurrentPage != page)
         {
-            currentPage.SetActive(false);
+            CurrentPage.SetActive(false);
             page.SetActive(true);
-            currentPage = page;
+            CurrentPage = page;
         }
     }
 

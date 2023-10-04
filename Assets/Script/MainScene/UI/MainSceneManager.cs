@@ -28,7 +28,6 @@ public class MainSceneManager : MonoBehaviour
     }
     void HandleClickLoadGameButton()
     {   
-        // loadWindow.SetActive(true);
         WindowManager.Instance.Open("Load");
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class SavePageManager : MonoBehaviour
+public class SavePage : MonoBehaviour
 {
     private string profileName = "testProfile"; /* 저장할 프로필 이름 */
     private TextMeshPro saveStateText; /* Save 페이지에 표시되는 텍스트 */
@@ -17,7 +17,7 @@ public class SavePageManager : MonoBehaviour
     }
     void Start()
     {
-        Debug.Log("SavePageManager: Start");        
+        Debug.Log("SavePage: Start");        
         saveResult = SaveManager.SaveGame(profileName); /* Save Game */      
         switch(saveResult) {
             case "success":
