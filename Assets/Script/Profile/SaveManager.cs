@@ -47,9 +47,9 @@ public static class SaveManager
     }
 
     /* 저장된 게임 로드. 게임 중 로드 UI에 의해 호출됨. */
-    public static void LoadGame<T>(string profileName)
+    public static void LoadGame(string profileName)
     {   
-        SaveProfile<T> saveProfile = Load(profileName); 
+        SaveProfile<GameSaveData> saveProfile = Load<GameSaveData>(profileName); 
     }
 
 }
