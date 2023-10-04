@@ -44,6 +44,12 @@ TagManager:
   - name: BG
     uniqueID: 384355243
     locked: 0
+  - name: Caveman
+    uniqueID: 3289137491
+    locked: 0
+  - name: BGFilter
+    uniqueID: 3564460209
+    locked: 0
   - name: BGComponent
     uniqueID: 261553997
     locked: 0

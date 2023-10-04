@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class Saram : MonoBehaviour
 {
-    
+    public int codeCounter = 0;
     
     public string[] nicknameTag1 = new string[]{"Lone","North","Red","Greedy","Dance with","Brave","Shadow","South","Wet","Hot","Winter","Silver"};
     public string[] nicknameTag2 = new string[]{"Star","Pig","Spear","Sword","Wind","Hawk","Wolf","Sheep","River","Mountain","Bear","Muscle"}; 
@@ -12,6 +12,8 @@ public class Saram : MonoBehaviour
     public string[] charTag3 = new string[]{"Challenger","All-thumbs","Jealous","General","Familism","Cold-blooded"};
     public int[] num = new int[]{0,0,0};
     
+    public List<List<int>> code = new List<List<int>>();
+
     public List<List<string>> nickname = new List<List<string>>();
     public List<List<float>> holy = new List<List<float>>();
     public List<List<float>> farming = new List<List<float>>();
@@ -24,12 +26,13 @@ public class Saram : MonoBehaviour
     public List<List<int>> char2 = new List<List<int>>();
     public List<List<int>> char3 = new List<List<int>>();
     
-
+    public List<List<int>> head = new List<List<int>>(); // cody point
 
     
     void Awake()
     {
         for(int i = 0; i<3; i++) {
+            code.Add(new List<int>());
             nickname.Add(new List<string>());
             holy.Add(new List<float>());
             farming.Add(new List<float>());
@@ -40,6 +43,7 @@ public class Saram : MonoBehaviour
             char1.Add(new List<int>());
             char2.Add(new List<int>());
             char3.Add(new List<int>());
+            head.Add(new List<int>());
         }
         
     }

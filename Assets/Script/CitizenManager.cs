@@ -8,6 +8,8 @@ public class CitizenManager : MonoBehaviour
 {
     public GameObject Resource, messageManager, effectManager;
     public GameObject seasonManager, buildManager, techManager;
+    public GameObject citizenMotionManager;
+    CitizenMotionManager citizenMotionBox;
     TechManager techBox;
     EffectManager effectBox;
     BuildingManager buildBox;
@@ -34,6 +36,7 @@ public class CitizenManager : MonoBehaviour
         buildBox = buildManager.GetComponent<BuildingManager>();
         effectBox = effectManager.GetComponent<EffectManager>();
         techBox = techManager.GetComponent<TechManager>();
+        citizenMotionBox = citizenMotionManager.GetComponent<CitizenMotionManager>();
 
         int citizenGroupCount = transform.Find("CitizenGroups").childCount;
         for (int i=0; i<citizenGroupCount; i++)
@@ -98,6 +101,7 @@ public class CitizenManager : MonoBehaviour
                         tabNum = 2; citizenRearrange();
                         tabPivotObj.transform.position = new Vector3(tabPivotObj.transform.position.x,hit.transform.position.y,0); break;
                     // case "CitizenPromo1" :
+                    
                     //     citizenMove(tabNum,citizenPivot[tabNum] + 0, 0); citizenRearrange(); break;
                     // case "CitizenPromo2" :
                     //     citizenMove(tabNum, citizenPivot[tabNum] + 1, 0); citizenRearrange(); break;
@@ -144,6 +148,10 @@ public class CitizenManager : MonoBehaviour
     public void citizenAdd(bool newGame = false)
     {
         int job = Random.Range(0,2)+1;
+
+        saram.code[job].Add(saram.codeCounter);
+        saram.codeCounter++;
+
         string new_nickname = saram.nicknameTag1[Random.Range(0,saram.nicknameTag1.Length)]+" "+saram.nicknameTag2[Random.Range(0,saram.nicknameTag2.Length)];
         saram.nickname[job].Add(new_nickname);
         
@@ -171,6 +179,8 @@ public class CitizenManager : MonoBehaviour
         saram.fighting[job].Add((float)Random.Range(8,13) / 10.0f);
         saram.love[job].Add((float)Random.Range(8,13) / 10.0f);
         saram.life[job].Add(Random.Range(1.0f,3.0f));
+
+        saram.head[job].Add(Random.Range(0,2));
 
         saram.char1[job].Add(Random.Range(0,6));
         saram.char2[job].Add(Random.Range(0,7)); 
@@ -207,6 +217,8 @@ public class CitizenManager : MonoBehaviour
     }
     public void citizenMove(int job,int pivot,int movejob)
     {
+        saram.code[movejob].Add(saram.code[job][pivot]);
+
         saram.nickname[movejob].Add(saram.nickname[job][pivot]);
         
         saram.holy[movejob].Add(saram.holy[job][pivot]);
@@ -219,6 +231,8 @@ public class CitizenManager : MonoBehaviour
         saram.char1[movejob].Add(saram.char1[job][pivot]);
         saram.char2[movejob].Add(saram.char2[job][pivot]);
         saram.char3[movejob].Add(saram.char3[job][pivot]);
+
+        saram.head[movejob].Add(saram.head[job][pivot]);
 
         if(movejob==0 && saram.char3[0][0]==-9) { // technician
             techBox.TechnicianNew();
@@ -264,6 +278,8 @@ public class CitizenManager : MonoBehaviour
             diedCitizenNum++;
         }
         saram.num[job]--;
+        citizenMotionBox.CavemanDestroy(saram.code[job][killpivot]);
+        saram.code[job].RemoveAt( killpivot );
         saram.nickname[job].RemoveAt( killpivot );
         saram.holy[job].RemoveAt( killpivot );
         saram.farming[job].RemoveAt( killpivot );
@@ -274,6 +290,7 @@ public class CitizenManager : MonoBehaviour
         saram.char1[job].RemoveAt( killpivot );
         saram.char2[job].RemoveAt( killpivot );
         saram.char3[job].RemoveAt( killpivot );
+        saram.head[job].RemoveAt( killpivot );
         
 
         
