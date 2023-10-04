@@ -8,12 +8,14 @@ using System;
 
 public class MenuManager : MonoBehaviour
 {
+    private static MenuManager instance;
+    public static MenuManager Instance => instance;
     private static bool isPaused; /* 게임 일시정지 여부 */
     private static GameObject menuWindow; /* 메뉴 창 */
 
     /* Pages */
     private static GameObject currentPage; /* 현재 활성화된 페이지: 항상 1개만 활성화 */
-    private GameObject menuPage; /* 기본 Menu 페이지 */
+    private static GameObject menuPage; /* 기본 Menu 페이지 */
     // private GameObject confirmQuitPage; /* Quit Conifrm 창 */
 
     /* Buttons */
@@ -39,7 +41,7 @@ public class MenuManager : MonoBehaviour
         foreach (Transform child in menuWindow.transform) /* MenuWindow 의 페이지들 모두 비활성화하고 시작. */
         {
             Transform head = child.Find("Head");
-            head.Find("CloseButton").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(CloseMenuWindow);
+            head.Find("CloseButton").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(Close);
             head.Find("BackButton")?.Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>OpenPage("MenuPage"));
             child.gameObject.SetActive(false);
         }
@@ -74,15 +76,15 @@ public class MenuManager : MonoBehaviour
     {
         if(isPaused) /* Menu 창 닫고 Resume */
         {
-            CloseMenuWindow();
+            Close();
         }
         
         else /*  Pause 하고 Menu 창 열기 */
         {
-            OpenMenuWindow();
+            Open();
         } 
     }
-    public void OpenMenuWindow()
+    public static void Open()
     {
         Debug.Log("MenuManager: OpenMenuWindow");
         Pause();
@@ -93,7 +95,7 @@ public class MenuManager : MonoBehaviour
         currentPage = menuPage;
         menuPage.SetActive(true);
     }
-    public static void CloseMenuWindow()
+    public static void Close()
     {
         /* currentPage 초기화 */
         currentPage.SetActive(false);
@@ -103,15 +105,6 @@ public class MenuManager : MonoBehaviour
         Resume();
     }
     /* Pages */
-    // public void OpenPage(GameObject page)
-    // {
-    //     if(currentPage != page)
-    //     {
-    //         currentPage.SetActive(false);
-    //         page.SetActive(true);
-    //         currentPage = page;
-    //     }
-    // }
     public static void OpenPage(string pageName)
     {
         GameObject page = menuWindow.transform.Find(pageName).gameObject;
@@ -123,7 +116,10 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    /* Menu Button Handlers */
+    public static void OpenMenuPage() /* 딜레이를 주는 Invoke() Call 을 위해 parameter 가 없는 함수가 필요함. */
+    {
+        OpenPage("MenuPage");
+    }
     public static void handleClickSettingButton()
     {
         OpenPage("SettingPage");

@@ -20,19 +20,19 @@ public class Resource : MonoBehaviour
 
     Transform happyBar;
     TextMeshPro moneyText, foodText, powerText, grainText;
+
+    /********** Save Data *********/
     public int money = 30;
     public float food = 1f, power = 1f, love = 0f, grain = 0f, defense = 1f, farmTech = 1f, fightTech = 1f;
     public float happy = 0.9f;
-
     public float moretax = 1f;
-
     int seasonEat = 0;
     float foodLimit = 500f;
-    bool waitNewSeason = true;
-    
+    bool waitNewSeason = true;    
     public bool poongzak = false;
-
     float happyBeforeHell;
+
+    /*******************************/
     void Start()
     {
         effectBox = effectManager.GetComponent<EffectManager>();
