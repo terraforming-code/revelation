@@ -7,6 +7,7 @@ public class Resource : MonoBehaviour
 {
     public GameObject seasonManager, citizenManager, messageManager, enemyManager, buildManager, mammothManager, hellManager, effectManager, techManager;
     public GameObject BGRainbow;
+    public GameObject grainTextObj;
     HellManager hellBox;
     EffectManager effectBox;
     MammothManager mammothBox;
@@ -49,8 +50,8 @@ public class Resource : MonoBehaviour
         moneyText = this.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>();
         foodText = this.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
         powerText = this.transform.GetChild(2).gameObject.GetComponent<TextMeshPro>();
-        grainText = this.transform.GetChild(3).gameObject.GetComponent<TextMeshPro>();
-        happyBar = this.transform.GetChild(4);
+        grainText = grainTextObj.GetComponent<TextMeshPro>();
+        happyBar = this.transform.GetChild(3);
     }
     void Update()
     {
@@ -223,7 +224,7 @@ public class Resource : MonoBehaviour
             {
                 hellBox.guardHell = hellBox.HellGuardCondition();
             }
-            else if(seasonEat % 12 == 4 || seasonEat % 12 == 10 )
+            else if(seasonEat % 12 == 5 || seasonEat % 12 == 11 )
             {
                 if(hellBox.guardHell == false)
                 {
@@ -248,7 +249,7 @@ public class Resource : MonoBehaviour
                     }
                 }
             }
-            else if(seasonEat % 12 == 5 || seasonEat % 12 == 11)
+            else if(seasonEat % 12 == 0 || seasonEat % 12 == 6)
             {
                 BGRainbow.SetActive(false);
             }

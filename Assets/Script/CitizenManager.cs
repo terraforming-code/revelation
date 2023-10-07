@@ -45,6 +45,7 @@ public class CitizenManager : MonoBehaviour
             Transform citizenGroup = transform.Find("CitizenGroups").GetChild(i);
             citizenGroup.Find("Promo").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickPromoButton(index)); /* Promo 버튼과 Handler Method 연결 */
             citizenGroup.Find("Kill").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickKillButton(index)); /* Promo 버튼과 Handler Method 연결 */
+            citizenGroup.Find("Heal").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickHealButton(index));
         }
 
         transform.Find("CitizenUp").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickUpButton()); /* Promo 버튼과 Handler Method 연결 */
@@ -134,6 +135,13 @@ public class CitizenManager : MonoBehaviour
         citizenKill(tabNum,citizenPivot[tabNum] + index, 1); 
         citizenRearrange();
     }
+    public void HandleClickHealButton(int index)
+    {
+        saram.healed[tabNum][citizenPivot[tabNum] + index] = true;
+        saram.life[tabNum][citizenPivot[tabNum] + index] = Mathf.Min(5f,saram.life[tabNum][citizenPivot[tabNum] + index]+1f);
+        resource.money -= 10;
+        citizenRearrange();
+    }
     public void HandleClickUpButton()
     {
         citizenPivot[tabNum]-=3; 
@@ -180,7 +188,8 @@ public class CitizenManager : MonoBehaviour
         saram.love[job].Add((float)Random.Range(8,13) / 10.0f);
         saram.life[job].Add(Random.Range(1.0f,3.0f));
 
-        saram.head[job].Add(Random.Range(0,2));
+        saram.head[job].Add(Random.Range(0,3));
+        saram.healed[job].Add(false);
 
         saram.char1[job].Add(Random.Range(0,6));
         saram.char2[job].Add(Random.Range(0,7)); 
@@ -233,6 +242,7 @@ public class CitizenManager : MonoBehaviour
         saram.char3[movejob].Add(saram.char3[job][pivot]);
 
         saram.head[movejob].Add(saram.head[job][pivot]);
+        saram.healed[movejob].Add(saram.healed[job][pivot]);
 
         if(movejob==0 && saram.char3[0][0]==-9) { // technician
             techBox.TechnicianNew();
@@ -291,6 +301,7 @@ public class CitizenManager : MonoBehaviour
         saram.char2[job].RemoveAt( killpivot );
         saram.char3[job].RemoveAt( killpivot );
         saram.head[job].RemoveAt( killpivot );
+        saram.healed[job].RemoveAt( killpivot );
         
 
         
@@ -333,6 +344,9 @@ public class CitizenManager : MonoBehaviour
 
             if(saram.num[0] == 1) tempGroup.Find("Promo").gameObject.SetActive(false); // promo button
             else tempGroup.Find("Promo").gameObject.SetActive(true);
+
+            if(effectBox.enable[4] == 1 && !saram.healed[tabNum][temp_i]) tempGroup.Find("Heal").gameObject.SetActive(true);
+            else tempGroup.Find("Heal").gameObject.SetActive(false);
         }
         
     }

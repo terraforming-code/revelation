@@ -101,7 +101,7 @@ public class EnemyManager : MonoBehaviour
             fightDateObj.transform.parent = SeasonTab.transform;
             fightDateObj.transform.localPosition = new Vector3(fightDate/12f*7f-3.5f,0,0);
         }
-        enemyLifeText.text = enemyLife.ToString();
-        enemyPowerText.text = enemyPower.ToString();
+        enemyLifeText.text = enemyLife.ToString("F1");
+        enemyPowerText.text = enemyPower.ToString("F1");
     }
 }

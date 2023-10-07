@@ -84,7 +84,7 @@ public class MammothManager : MonoBehaviour
             HuntDateObj.transform.parent = SeasonTab.transform;
             HuntDateObj.transform.localPosition = new Vector3(HuntDate/12f*7f-3.5f,0,0);
         }
-        mammothPowerText.text = mammothPower.ToString();
-        mammothFoodText.text = mammothFood.ToString();
+        mammothPowerText.text = mammothPower.ToString("F1");
+        mammothFoodText.text = mammothFood.ToString("F1");
     }
 }

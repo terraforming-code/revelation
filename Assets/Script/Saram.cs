@@ -27,6 +27,7 @@ public class Saram : MonoBehaviour
     public List<List<int>> char3 = new List<List<int>>();
     
     public List<List<int>> head = new List<List<int>>(); // cody point
+    public List<List<bool>> healed = new List<List<bool>>();
 
     
     void Awake()
@@ -44,6 +45,7 @@ public class Saram : MonoBehaviour
             char2.Add(new List<int>());
             char3.Add(new List<int>());
             head.Add(new List<int>());
+            healed.Add(new List<bool>());
         }
         
     }

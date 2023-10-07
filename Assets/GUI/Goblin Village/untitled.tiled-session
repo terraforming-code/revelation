@@ -1,0 +1,91 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "s.tsx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "C:/Users/ASUS/Desktop/unity/revelation/Assets/GUI/map/tiledmap/bridge.tmx": {
+            "scale": 0.811767578125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 512.461954887218,
+                "y": 64.67368421052635
+            }
+        },
+        "C:/Users/ASUS/Desktop/unity/revelation/Assets/GUI/map/tiledmap/building01.tmx": {
+            "scale": 0.4638671875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 896.8084210526315,
+                "y": 192.94315789473683
+            }
+        },
+        "C:/Users/ASUS/Desktop/unity/revelation/Assets/GUI/map/tiledmap/ground.tmx": {
+            "scale": 0.25,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1400,
+                "y": 466
+            }
+        },
+        "C:/Users/ASUS/Desktop/unity/revelation/Assets/tiles/forest.tmx": {
+            "scale": 0.927734375,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 447.32631578947365,
+                "y": 192.4042105263158
+            }
+        },
+        "C:/Users/ASUS/Desktop/unity/revelation/Assets/tiles/ground.tmx": {
+            "scale": 0.20294189453125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2044.92030075188,
+                "y": 578.9834586466166
+            }
+        },
+        "C:/Users/ASUS/Desktop/unity/revelation/Assets/tiles/river00.tmx": {
+            "scale": 0.20294189453125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2049.847819548872,
+                "y": 322.7524812030076
+            }
+        },
+        "C:/Users/ASUS/Desktop/unity/revelation/Assets/tiles/river01.tmx": {
+            "scale": 0.7215711805555556,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 576.5196992481203,
+                "y": 320.82766917293225
+            }
+        },
+        "s.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tilesets.tsx": {
+            "dynamicWrapping": false
+        }
+    },
+    "last.imagePath": "C:/Users/ASUS/Desktop/unity/revelation/Assets/GUI/map",
+    "map.height": 5,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 128,
+    "map.tileWidth": 128,
+    "map.width": 9,
+    "openFiles": [
+        "s.tsx"
+    ],
+    "project": "untitled.tiled-project",
+    "recentFiles": [
+        "s.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.type": 1
+}

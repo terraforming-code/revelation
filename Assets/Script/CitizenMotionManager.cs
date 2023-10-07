@@ -8,6 +8,8 @@ public class CitizenMotionManager : MonoBehaviour
     Saram saram;
     public GameObject CavemanObj;
     public GameObject CitizenBriefTab;
+    public Sprite[] headDecoSprite = new Sprite[]{null,null,null};
+    public Sprite dyingFaceSprite;
     public List<GameObject> CavemanObjList = new List<GameObject>();
     public List<int> CavemanCodeList = new List<int>();
     public int[] num = new int[]{0,0,0};
@@ -49,7 +51,8 @@ public class CitizenMotionManager : MonoBehaviour
                 CavemanObjTemp.GetComponent<Caveman>().nickname = saram.nickname[job][i];
                 CavemanObjTemp.GetComponent<Caveman>().dir = dirTemp;
                 CavemanObjTemp.GetComponent<Caveman>().job = job;
-                CavemanObjTemp.transform.localPosition = new Vector3(dirTemp*-11,0,0);
+                CavemanObjTemp.GetComponent<Caveman>().citizenHeadDecoSprite = headDecoSprite[saram.head[job][i]];
+                CavemanObjTemp.transform.localPosition = new Vector3((dirTemp==-1?13f:-32f),0,0);
                 CavemanObjTemp.transform.localScale = new Vector3(dirTemp*0.7f,0.7f,1);
                 CavemanObjList.Add(CavemanObjTemp);
 
@@ -76,6 +79,7 @@ public class CitizenMotionManager : MonoBehaviour
         for(int k = 0; k < CavemanCodeList.Count; k++) {
             if(CavemanCodeList[k]==code) {
                 num[CavemanObjList[k].GetComponent<Caveman>().job]--;
+                CavemanObjList[k].transform.Find("bone_006").Find("bone_007").Find("Face 01").GetComponent<SpriteRenderer>().sprite = dyingFaceSprite;
                 CavemanObjList[k].GetComponent<Animator>().SetTrigger("dying");
                 Destroy(CavemanObjList[k].GetComponent<Caveman>());
                 Destroy(CavemanObjList[k],1.2f);
