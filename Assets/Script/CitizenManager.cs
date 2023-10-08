@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class CitizenManager : MonoBehaviour
+public class CitizenManager : SavableObject
 {
     public GameObject Resource, messageManager, effectManager;
     public GameObject seasonManager, buildManager, techManager;
@@ -17,14 +17,21 @@ public class CitizenManager : MonoBehaviour
     Resource resource;
     Saram saram;
     MessageManager messageBox;
-
     GameObject upObj, downObj, tabPivotObj;
     public int tabNum = 1;
     public int[] citizenPivot = new int[]{0,0,0};
-
     public int diedCitizenNum = 0;
-    // Start is called before the first frame update
-    void Start()
+
+    public override void CreateNew() {
+        // Add proto DB
+        for(int i = 0; i < 5; i++)
+            AddCitizen(true);  
+    }
+    public override void Load() {
+    }
+    public override void Save() {
+    }
+    void Awake()
     {
         upObj = this.transform.GetChild(3).gameObject;
         downObj = this.transform.GetChild(4).gameObject;
@@ -50,16 +57,10 @@ public class CitizenManager : MonoBehaviour
 
         transform.Find("CitizenUp").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickUpButton()); /* Promo 버튼과 Handler Method 연결 */
         transform.Find("CitizenDown").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickDownButton()); /* Promo 버튼과 Handler Method 연결 */
-
-        // Add proto DB
-        for(int i = 0; i<5; i++)
-            citizenAdd(true);
-
-        
-
-        
-
-        citizenRearrange();
+    }
+    void Start()
+    {
+        Arrange();
     }
 
     // Update is called once per frame
@@ -72,7 +73,7 @@ public class CitizenManager : MonoBehaviour
                 if(saram.life[i][j]<0f)
                 {
                     citizenKill(i,j,2);
-                    citizenRearrange();
+                    Arrange();
                 }
                 else j++;
             }
@@ -93,67 +94,67 @@ public class CitizenManager : MonoBehaviour
                 GameObject click_obj = hit.transform.gameObject;
                 switch(click_obj.name) {
                     case "CitizenTabButton1" :
-                        tabNum = 0; citizenRearrange();
+                        tabNum = 0; 
+                        Arrange();
                         tabPivotObj.transform.position = new Vector3(tabPivotObj.transform.position.x,hit.transform.position.y,0); break;
                     case "CitizenTabButton2" :
-                        tabNum = 1; citizenRearrange(); 
+                        tabNum = 1; 
+                        Arrange(); 
                         tabPivotObj.transform.position = new Vector3(tabPivotObj.transform.position.x,hit.transform.position.y,0); break;
                     case "CitizenTabButton3" :
-                        tabNum = 2; citizenRearrange();
+                        tabNum = 2; 
+                        Arrange();
                         tabPivotObj.transform.position = new Vector3(tabPivotObj.transform.position.x,hit.transform.position.y,0); break;
                     // case "CitizenPromo1" :
-                    
-                    //     citizenMove(tabNum,citizenPivot[tabNum] + 0, 0); citizenRearrange(); break;
+                    //     citizenMove(tabNum,citizenPivot[tabNum] + 0, 0); Arrange(); break;
                     // case "CitizenPromo2" :
-                    //     citizenMove(tabNum, citizenPivot[tabNum] + 1, 0); citizenRearrange(); break;
+                    //     citizenMove(tabNum, citizenPivot[tabNum] + 1, 0); Arrange(); break;
                     // case "CitizenPromo3" :
-                    //     citizenMove(tabNum, citizenPivot[tabNum] + 2, 0); citizenRearrange(); break;
+                    //     citizenMove(tabNum, citizenPivot[tabNum] + 2, 0); Arrange(); break;
                     // case "CitizenKill1" :
-                    //     citizenKill(tabNum, citizenPivot[tabNum] + 0, 1); citizenRearrange(); break;
+                    //     citizenKill(tabNum, citizenPivot[tabNum] + 0, 1); Arrange(); break;
                     // case "CitizenKill2" :
-                    //     citizenKill(tabNum, citizenPivot[tabNum] + 1, 1); citizenRearrange(); break;
+                    //     citizenKill(tabNum, citizenPivot[tabNum] + 1, 1); Arrange(); break;
                     // case "CitizenKill3" :
-                    //     citizenKill(tabNum, citizenPivot[tabNum] + 2, 1); citizenRearrange(); break;
+                    //     citizenKill(tabNum, citizenPivot[tabNum] + 2, 1); Arrange(); break;
                     // case "CitizenUp" :
-                    //     citizenPivot[tabNum]-=3; citizenRearrange(); break;
+                    //     citizenPivot[tabNum]-=3; Arrange(); break;
                     // case "CitizenDown" :
-                    //     citizenPivot[tabNum]+=3; citizenRearrange(); break;
+                    //     citizenPivot[tabNum]+=3; Arrange(); break;
                 }
             }
             
         }
     }
-
-
     public void HandleClickPromoButton(int index)
     {
         citizenMove(tabNum,citizenPivot[tabNum] + index, 0); 
-        citizenRearrange();
+        Arrange();
     }
     public void HandleClickKillButton(int index)
     {
         citizenKill(tabNum,citizenPivot[tabNum] + index, 1); 
-        citizenRearrange();
+        Arrange();
     }
     public void HandleClickHealButton(int index)
     {
         saram.healed[tabNum][citizenPivot[tabNum] + index] = true;
         saram.life[tabNum][citizenPivot[tabNum] + index] = Mathf.Min(5f,saram.life[tabNum][citizenPivot[tabNum] + index]+1f);
         resource.money -= 10;
-        citizenRearrange();
+        Arrange();
     }
     public void HandleClickUpButton()
     {
         citizenPivot[tabNum]-=3; 
-        citizenRearrange();
+        Arrange();
     }
     public void HandleClickDownButton()
     {
         citizenPivot[tabNum]+=3; 
-        citizenRearrange();        
+        Arrange();        
     }
 
-    public void citizenAdd(bool newGame = false)
+    public void AddCitizen(bool newGame = false)
     {
         int job = Random.Range(0,2)+1;
 
@@ -194,6 +195,7 @@ public class CitizenManager : MonoBehaviour
         saram.char1[job].Add(Random.Range(0,6));
         saram.char2[job].Add(Random.Range(0,7)); 
         saram.char3[job].Add(Random.Range(0,6));
+
         // Special skill provide process by god's effect
         if(effectBox.enable[8]+effectBox.enable[9]+effectBox.enable[10]+effectBox.enable[11] > 0) {
             if(Random.Range(0,11-effectBox.enable[8]-effectBox.enable[9]-effectBox.enable[10]-effectBox.enable[11]) == 3) { // probability
@@ -220,9 +222,7 @@ public class CitizenManager : MonoBehaviour
 
         saram.num[job]++;
 
-        messageBox.messageAdd("New Live : "+new_nickname);
-
-
+        messageBox.messageAdd("New Live : " + new_nickname);
     }
     public void citizenMove(int job,int pivot,int movejob)
     {
@@ -280,7 +280,7 @@ public class CitizenManager : MonoBehaviour
         }
         if(job == 0) {
             saram.HolyAdd(-0.15f);
-            citizenRearrange();
+            Arrange();
         }
         if(reason != -1) {
             if(buildBox.build[5] == 1f) resource.happy = Mathf.Max(resource.happy-0.0125f,0.8f);
@@ -306,7 +306,7 @@ public class CitizenManager : MonoBehaviour
 
         
     }
-    public void citizenRearrange()
+    public void Arrange()
     {
         if(citizenPivot[tabNum] == 0) upObj.SetActive(false);
         else upObj.SetActive(true);
@@ -330,7 +330,7 @@ public class CitizenManager : MonoBehaviour
                 break;
         }
 
-        for(int i = 0; i < Mathf.Min(saram.num[tabNum] - citizenPivot[tabNum],3); i++)
+        for(int i = 0; i < Mathf.Min(saram.num[tabNum] - citizenPivot[tabNum], 3); i++)
         {
             
             int temp_i = citizenPivot[tabNum]+i;

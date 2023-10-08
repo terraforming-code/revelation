@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class HellManager : MonoBehaviour
+public class HellManager : SavableObject
 {
     public GameObject Resource, SeasonManager, CitizenManager, buildManager, enemyManager, mammothManager,helleventManager,techManager,effectManager;
     public Sprite hellHappyDaySprite;
@@ -21,20 +21,55 @@ public class HellManager : MonoBehaviour
     public TextMeshPro hellPriceText;
     
     public Sprite[] hellSpriteBox = new Sprite[]{null,null,null,null,null,null,null,null,null,null,null,null,null,null};
+
+    /********** Save Data *********/
     public int upcomingHell = -1;
-    public float hellDie = 0f, hellDieNum = 3f; // if value is 1 someone die, killing disaster increases this value
+    public int hellPrice;
+    public float hellDie = 0f; 
+    public float hellDieNum = 3f; // if value is 1 someone die, killing disaster increases this value
     public float hellDestroy = 0f;
+    public float hellEventCounter = 0f;
     public bool guardHell = true;
     public bool eyeOn = false; // find inner bad man by spy card
     public bool bigLose = false;
     public bool hellLazy = false;
     public bool experienceFlood = false;
-    public int hellPrice;
+    public bool eventTriggerOn = false;
+    /*******************************/
+    public override void Load() {
+        HellSaveData data = SaveManager.Instance.LoadData.Hell;
 
-    bool eventTriggerOn = false;
-    float hellEventCounter = 0f;
-    // Start is called before the first frame update
-    void Start()
+        upcomingHell = data.upcomingHell;
+        hellPrice = data.hellPrice;
+        hellDie = data.hellDie; 
+        hellDieNum = data.hellDieNum; 
+        hellDestroy = data.hellDestroy;
+        hellEventCounter = data.hellEventCounter;
+        guardHell = data.guardHell;
+        eyeOn = data.eyeOn; 
+        bigLose = data.bigLose;
+        hellLazy = data.hellLazy;
+        experienceFlood = data.experienceFlood;
+        eventTriggerOn = data.eventTriggerOn;
+    }
+    public override void Save() {
+        SaveManager.Instance.SaveData.Hell = new HellSaveData(
+            upcomingHell,
+            hellPrice, 
+            hellDie,
+            hellDieNum, 
+            hellDestroy,
+            hellEventCounter,
+            guardHell,
+            eyeOn,
+            bigLose,
+            hellLazy,
+            experienceFlood,
+            eventTriggerOn
+        );
+    }
+
+    void Awake()
     {
         hellEventBox = helleventManager.GetComponent<HellEventManager>();
         effectBox = effectManager.GetComponent<EffectManager>();
@@ -51,7 +86,6 @@ public class HellManager : MonoBehaviour
         hellPriceText = this.transform.parent.parent.GetChild(1).GetComponent<TextMeshPro>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(!guardHell)

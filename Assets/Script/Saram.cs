@@ -1,19 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class Saram : MonoBehaviour
+public class Saram : SavableObject
 {
+
     public int codeCounter = 0;
-    
     public string[] nicknameTag1 = new string[]{"Lone","North","Red","Greedy","Dance with","Brave","Shadow","South","Wet","Hot","Winter","Silver"};
     public string[] nicknameTag2 = new string[]{"Star","Pig","Spear","Sword","Wind","Hawk","Wolf","Sheep","River","Mountain","Bear","Muscle"}; 
     public string[] charTag1 = new string[]{"Lazybones","Eager Beaver","Casanova","Celibacy","Aggressive","Dove"};
     public string[] charTag2 = new string[]{"Gourmand","Weak","Inquisitor","Believer","Healthy","Anarchist","Agape"};
     public string[] charTag3 = new string[]{"Challenger","All-thumbs","Jealous","General","Familism","Cold-blooded"};
-    public int[] num = new int[]{0,0,0};
     
+    
+    /********** Save Data *********/
+    public int[] num = new int[]{0,0,0};
     public List<List<int>> code = new List<List<int>>();
-
     public List<List<string>> nickname = new List<List<string>>();
     public List<List<float>> holy = new List<List<float>>();
     public List<List<float>> farming = new List<List<float>>();
@@ -25,11 +26,44 @@ public class Saram : MonoBehaviour
     public List<List<int>> char1 = new List<List<int>>(); 
     public List<List<int>> char2 = new List<List<int>>();
     public List<List<int>> char3 = new List<List<int>>();
-    
     public List<List<int>> head = new List<List<int>>(); // cody point
     public List<List<bool>> healed = new List<List<bool>>();
-
-    
+    /*******************************/
+    public override void Load() {
+        SaramSaveData data = SaveManager.Instance.LoadData.Saram;
+        num = data.num;
+        code = data.code;
+        nickname = data.nickname;
+        holy = data.holy;
+        farming = data.farming;
+        eating = data.eating;
+        fighting = data.fighting;
+        love = data.love;
+        life = data.life;
+        char1 = data.char1; 
+        char2 = data.char2;
+        char3 = data.char3;
+        head = data.head;
+        healed = data.healed;
+    }
+    public override void Save() {
+        SaveManager.Instance.SaveData.Saram = new SaramSaveData(
+            num,
+            code,
+            nickname,
+            holy,
+            farming,
+            eating,
+            fighting,
+            love,
+            life,
+            char1, 
+            char2,
+            char3,
+            head,
+            healed
+        );
+    }
     void Awake()
     {
         for(int i = 0; i<3; i++) {
@@ -49,8 +83,7 @@ public class Saram : MonoBehaviour
         }
         
     }
-
-    public void GiveChar(int i,int j,int prop,int propBox) // i,j is index, prop is characteristic number, propBox is characteristic Box number
+    public void GiveChar(int i, int j, int prop, int propBox) // i,j is index, prop is characteristic number, propBox is characteristic Box number
     {
         if(propBox == 1)
         {

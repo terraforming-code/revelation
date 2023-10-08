@@ -18,7 +18,7 @@ public class ButtonManager : MonoBehaviour
     /* 공통 효과음 */
     public void HandleClickButton()
     {
-        Debug.Log("ButtonManager: handleClickButton");
+        // Debug.Log("ButtonManager: handleClickButton");
         // AudioManager.ButtonClickSound.Play();
     }
 }

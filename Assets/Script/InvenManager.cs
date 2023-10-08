@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-public class InvenManager : MonoBehaviour
+public class InvenManager: SavableObject
 {
     public GameObject CardBox;
     public GameObject RevelWindow; 
@@ -15,16 +14,30 @@ public class InvenManager : MonoBehaviour
     EffectManager EffectBox;
     Saram saram;
 
-    public int count = 0;
-    public List<int> invenNumBox = new List<int>();
+    // public int count = 0;
     public SpriteRenderer[] invenBlock = new SpriteRenderer[]{null,null,null,null,null,null,null,null};
     public int invenLimit = 6;
-    int invenSelect = -1;
     GameObject invenSelectObj;
 
-    
-    // Start is called before the first frame update
-    void Start()
+    /********** Save Data *********/
+    public List<int> invenNumBox = new List<int>();
+    int invenSelect = -1;
+    /*******************************/
+    public override void Load() {
+        InvenSaveData data = SaveManager.Instance.LoadData.Inven;
+        invenNumBox = data.invenNumBox;
+        invenSelect = data.invenSelect;
+        
+        /* Rearrange Inven */
+        rearrange();
+    }
+    public override void Save() {
+        SaveManager.Instance.SaveData.Inven = new InvenSaveData(
+            invenNumBox,
+            invenSelect
+        );
+    }
+    void Awake()
     {
         invenSelectObj = this.transform.GetChild(8).gameObject; /* SelectedCard (GetChild(8)) */
         cardBox = CardBox.GetComponent<CardBox>();
@@ -123,12 +136,11 @@ public class InvenManager : MonoBehaviour
             invenSelectObj.transform.position = this.transform.GetChild(clickNumber).position;
         }
     }
-
     public void HandleClickRemoveButton(){
         Debug.Log("HandleClickRemoveButton");
         if(invenSelect != -1 && !RevelBox.reveling) {
             invenNumBox.RemoveAt(invenSelect);
-            invenRearrange();
+            rearrange();
             invenSelect = -1;
             invenSelectObj.SetActive(false);
         }
@@ -136,13 +148,17 @@ public class InvenManager : MonoBehaviour
     public void invenAdd(int num)
     {
         invenNumBox.Add(num);
-        invenRearrange();
+        rearrange();
     }
-    public void invenRearrange()
+    public void rearrange()
     {
+        Debug.Log($"InvenManager: rearrange");
         for(int i = 0; i < invenLimit; i++)
         {
-            if(i < invenNumBox.Count) invenBlock[i].sprite = cardBox.transform.GetChild(invenNumBox[i]%cardBox.techStart).gameObject.GetComponent<SpriteRenderer>().sprite;
+            if(i < invenNumBox.Count){
+                Debug.Log($"InvenManager: invenNumBox[i]={invenNumBox[i]}");
+                invenBlock[i].sprite = cardBox.transform.GetChild(invenNumBox[i]%cardBox.techStart).gameObject.GetComponent<SpriteRenderer>().sprite;
+            } 
             else invenBlock[i].sprite = null;
         }
     }

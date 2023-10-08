@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Resource : MonoBehaviour
+// public class Resource : SavableObject<ResourceSaveData>
+public class Resource: SavableObject
 {
     public GameObject seasonManager, citizenManager, messageManager, enemyManager, buildManager, mammothManager, hellManager, effectManager, techManager;
     public GameObject BGRainbow;
@@ -21,19 +22,58 @@ public class Resource : MonoBehaviour
 
     Transform happyBar;
     TextMeshPro moneyText, foodText, powerText, grainText;
+
+    /********** Save Data *********/
     public int money = 30;
     public float food = 1f, power = 1f, love = 0f, grain = 0f, defense = 1f, farmTech = 1f, fightTech = 1f;
     public float happy = 0.9f;
-
     public float moretax = 1f;
-
     int seasonEat = 0;
     float foodLimit = 500f;
-    bool waitNewSeason = true;
-    
+    bool waitNewSeason = true;    
     public bool poongzak = false;
-
     float happyBeforeHell;
+    /*******************************/
+    public override void Load() {
+        ResourceSaveData data = SaveManager.Instance.LoadData.Resource;
+        Debug.Log($"Resource: Load: data={data}");
+        money = data.money;
+        food = data.food; 
+        power = data.power; 
+        love = data.love; 
+        grain = data.grain; 
+        defense = data.defense; 
+        farmTech = data.farmTech; 
+        fightTech = data.fightTech;
+        happy = data.happy;
+        moretax = data.moretax;
+        seasonEat = data.seasonEat;
+        foodLimit = data.foodLimit;
+        waitNewSeason = data.waitNewSeason;    
+        poongzak = data.poongzak;
+        happyBeforeHell = data.happyBeforeHell;
+    }
+    public override void Save() {
+        ResourceSaveData data = new ResourceSaveData(
+            money,
+            seasonEat,
+            food, 
+            power, 
+            love, 
+            grain, 
+            defense, 
+            farmTech, 
+            fightTech, 
+            happy,
+            moretax,
+            foodLimit,
+            happyBeforeHell,
+            waitNewSeason,    
+            poongzak
+        );
+        SaveManager.Instance.SaveData.Resource = data;
+    }
+
     void Start()
     {
         effectBox = effectManager.GetComponent<EffectManager>();
@@ -139,7 +179,7 @@ public class Resource : MonoBehaviour
                 while(love > 2)
                 {
                     love -= 2;
-                    citizenBox.citizenAdd();
+                    citizenBox.AddCitizen();
                 }
             }
             // eat process
@@ -213,11 +253,11 @@ public class Resource : MonoBehaviour
                     }
                 }
                 enemyBox.enemyObjRearrange();
-                mammothBox.mammothObjRearrange();
+                mammothBox.MammothObjRearrange();
             }
 
             //citizen rearrange
-            citizenBox.citizenRearrange();
+            citizenBox.Arrange();
 
             //hell process + Rainbow
             if(seasonEat % 12 == 3 || seasonEat % 12 == 9 )

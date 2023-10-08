@@ -5,12 +5,11 @@ using UnityEngine.UI;
 
 public class MainSceneManager : MonoBehaviour
 {
-    private Button NewGameButton;
+    private GameObject loadWindow;
     void Awake()
     {
-        NewGameButton = transform.Find("NewGameButton").Find("Button").GetComponent<Button>();
-
-        NewGameButton.onClick.AddListener(onClickNewGameButton);
+        transform.Find("NewGameButton").Find("Button").GetComponent<Button>().onClick.AddListener(HandleClickNewGameButton);
+        transform.Find("LoadGameButton").Find("Button").GetComponent<Button>().onClick.AddListener(HandleClickLoadGameButton);
     }
     // Start is called before the first frame update
     void Start()
@@ -23,8 +22,12 @@ public class MainSceneManager : MonoBehaviour
     {
         
     }
-    void onClickNewGameButton()
+    void HandleClickNewGameButton()
     {   
         GameManager.LoadScene("SampleScene");
+    }
+    void HandleClickLoadGameButton()
+    {   
+        WindowManager.Instance.Open("Load");
     }
 }

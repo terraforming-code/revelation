@@ -33,7 +33,7 @@ public class BuildingManager : MonoBehaviour
             if(Homeislove >= 2f)
             {
                 Homeislove = 0f;
-                citizenBox.citizenAdd();
+                citizenBox.AddCitizen();
             }
         }
         if(build[3] == 1f)

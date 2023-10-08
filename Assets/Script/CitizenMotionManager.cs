@@ -14,19 +14,16 @@ public class CitizenMotionManager : MonoBehaviour
     public List<int> CavemanCodeList = new List<int>();
     public int[] num = new int[]{0,0,0};
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         saram = Resource.GetComponent<Saram>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         for(int i = 0; i < 3; i ++) {
             if(num[i]*3-saram.num[i] < 0)
-            {
-                
+            {                
                 if(Random.Range(0,100) == 17) {num[i]++; CavemanAdd(i);}
             }
         }

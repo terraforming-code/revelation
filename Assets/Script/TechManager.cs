@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TechManager : MonoBehaviour
+public class TechManager: SavableObject
 {
     public GameObject Resource, EnemyManager, CitizenManager, CardBox, buildManager, mammothManager, hellManager;
     public Sprite ironAgeComplete;
@@ -16,11 +16,29 @@ public class TechManager : MonoBehaviour
     CitizenManager citizenBox;
     CardBox cardBox;
 
-    public int[] enable = new int[]{0,-1,-1,-1,-1,0,-1,0,-1,0,-1,-1,-1};
-    
+    /********** Save Data *********/
+    public int[] enable = new int[]{0,-1,-1,-1,-1,0,-1,0,-1,0,-1,-1,-1};    
     public int ironAgeComing = 0;
     public bool ironAgeStart = false, ironAge = false;
-    // Start is called before the first frame update
+    /*******************************/
+    public override void Load() {
+        TechSaveData data = SaveManager.Instance.LoadData.Tech;
+        Debug.Log($"Resource: Load: data={data}");
+        enable = data.enable;
+        ironAgeComing = data.ironAgeComing; 
+        ironAgeStart = data.ironAgeStart; 
+        ironAge = data.ironAge; 
+    }
+    public override void Save() {
+        TechSaveData data = new TechSaveData(
+            enable,
+            ironAgeComing, 
+            ironAgeStart, 
+            ironAge 
+        );
+        SaveManager.Instance.SaveData.Tech = data;
+    }
+
     void Start()
     {
         hellBox = hellManager.GetComponent<HellManager>();

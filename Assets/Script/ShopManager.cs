@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class ShopManager : MonoBehaviour
+public class ShopManager: SavableObject
 {
     public GameObject SeasonPivot, CardBox, EffectManager, InvenManager, Resource, TechManager, HellManager;
     public Sprite EffectStand, InvenStand, TechStand;
@@ -20,20 +20,47 @@ public class ShopManager : MonoBehaviour
     int cardAmount;
 
     // int shop1 = -1, shop2 = -1, shop3 = -1, shop4 = -1;
-    int shopRerollPrice = 10; // base value changes at ChangeCard()
     SpriteRenderer shop1Image, shop2Image, shop3Image, shop4Image;
     SpriteRenderer shop1Stand, shop2Stand, shop3Stand, shop4Stand;
     TextMeshPro shop1Price, shop2Price, shop3Price, shop4Price, shopRerollPriceText;
 
-    private int[] shops = {-1, -1, -1, -1};
     List<SpriteRenderer> shopImages = new List<SpriteRenderer>();
     List<SpriteRenderer> shopStands = new List<SpriteRenderer>();
     List<TextMeshPro> shopPriceTexts = new List<TextMeshPro>();
+    // private bool prevIsHellRevealed = false;
+    private int[] prevShops = {-2, -2, -2, -2};
 
+    /********** Save Data *********/
+    private int shopRerollPrice = 10; // base value changes at ChangeCard()
+    private bool isHellRevealed = false;
+    private int[] shops = {-1, -1, -1, -1};
     bool waitspring;
-    // Start is called before the first frame update
-    void Start()
+    /*******************************/
+    public override void Load() {
+        ShopSaveData data = SaveManager.Instance.LoadData.Shop;
+
+        shopRerollPrice = data.shopRerollPrice;
+        isHellRevealed = data.isHellRevealed;
+        shops = data.shops;
+        waitspring = data.waitspring;
+        
+        /* Arrange Shops */
+        if (isHellRevealed){
+            RevealHellCard();
+        }
+        Arrange();        
+    }
+    public override void Save() {
+        SaveManager.Instance.SaveData.Shop = new ShopSaveData(
+            shopRerollPrice,
+            isHellRevealed,
+            shops,
+            waitspring
+        );
+    }
+    void Awake()
     {
+        /* 게임 오브젝트 연결 */
         hellBox = HellManager.GetComponent<HellManager>();
         techBox = TechManager.GetComponent<TechManager>();
         seasonManager = SeasonPivot.GetComponent<SeasonManager>();
@@ -43,25 +70,12 @@ public class ShopManager : MonoBehaviour
         invenBox = InvenManager.GetComponent<InvenManager>();
 
         cardAmount = cardBox.price.Length;
-        // shop1Image = this.transform.GetChild(1).GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        // shop2Image = this.transform.GetChild(2).GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        // shop3Image = this.transform.GetChild(3).GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        // shop4Image = this.transform.GetChild(4).GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        // shop1Stand = this.transform.GetChild(1).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        // shop2Stand = this.transform.GetChild(2).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        // shop3Stand = this.transform.GetChild(3).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        // shop4Stand = this.transform.GetChild(4).GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        // shop1Price = this.transform.GetChild(1).GetChild(1).gameObject.GetComponent<TextMeshPro>();
-        // shop2Price = this.transform.GetChild(2).GetChild(1).gameObject.GetComponent<TextMeshPro>();
-        // shop3Price = this.transform.GetChild(3).GetChild(1).gameObject.GetComponent<TextMeshPro>();
-        // shop4Price = this.transform.GetChild(4).GetChild(1).gameObject.GetComponent<TextMeshPro>();
 
-        // shopRerollPriceText = this.transform.GetChild(5).GetChild(0).gameObject.GetComponent<TextMeshPro>();
-        shopRerollPriceText = this.transform.Find("ShopReroll").GetChild(0).gameObject.GetComponent<TextMeshPro>();
-        
+        shopRerollPriceText = transform.Find("ShopReroll").GetChild(0).gameObject.GetComponent<TextMeshPro>();
         transform.Find("ShopReroll").Find("RerollButton").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(HandleClickShopRerollButton); /* Reroll 버튼과 Handler Method 연결 */
         transform.Find("Body").Find("ShopHell").Find("BuyButton").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(HandleClickCardHellBuyButton); /* HellBuy 버튼과 Handler Method 연결 */
         
+        /* ShopImage, ShopStand, ShopPriceText, BuyButton */
         int shopCount = transform.Find("Body").Find("Shops").childCount;
         for (int i = 0; i < shopCount; i++)
         {
@@ -71,7 +85,6 @@ public class ShopManager : MonoBehaviour
             shopPriceTexts.Add(shop.GetChild(1).gameObject.GetComponent<TextMeshPro>());
             int index = i;
             shop.Find("BuyButton").Find("Button").gameObject.GetComponent<Button>().onClick.AddListener(()=>HandleClickCardBuyButton(index));/* Buy 버튼과 Handler Method 연결 */
-            // Debug.Log("ShopManager: " + shop.Find("BuyButton").Find("Button").gameObject + "index=" + index);
         }
     }
 
@@ -166,26 +179,58 @@ public class ShopManager : MonoBehaviour
     public void HandleClickCardHellBuyButton(){
         if(resource.money >= hellBox.hellPrice && hellBox.upcomingHell != -1 && hellBox.hellSprite.sprite == null) {
             resource.money -= hellBox.hellPrice;
-            hellBox.hellSprite.sprite = hellBox.hellSpriteBox[hellBox.upcomingHell];
-            hellBox.hellPriceText.text = "";
-        }        
+            isHellRevealed = true;
+            RevealHellCard();
+        }
+                
     }
     public void HandleClickCardBuyButton(int i) {
         Debug.Log("ShopManager: HandleClickCardBuyButton: i=" + i);
         if(shops[i] != -1 && resource.money >= cardBox.price[shops[i]] && BuyCard(shops[i])) {
             resource.money -= cardBox.price[shops[i]];
-            shopImages[i].sprite = null;
-            shopStands[i].sprite = null;
-            shopPriceTexts[i].text = "";
             shops[i] = -1;
+            Arrange();
         }        
+    }
+    void Arrange() {
+        for (int i = 0; i < shops.Length; i++){
+            Debug.Log($"Arrange: loop: i={i} shops[i]={shops[i]}");
+            if (shops[i] != prevShops[i]){
+                if (shops[i] == -1){
+                    shopImages[i].sprite = null;
+                    shopStands[i].sprite = null;
+                    shopPriceTexts[i].text = "";
+                }
+                else {
+                    if(shops[i]<16) {
+                        shopStands[i].sprite = EffectStand;
+                    }
+                    else if(shops[i]<100-cardBox.techStart) {
+                        shopStands[i].sprite = InvenStand;
+                    }
+                    else {
+                        shopStands[i].sprite = TechStand;
+                    }
+                    transform.Find("Body").Find("Shops").GetChild(i).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+                    shopImages[i].sprite = cardBox.transform.GetChild(shops[i]).GetComponent<SpriteRenderer>().sprite;
+                    shopPriceTexts[i].text = cardBox.price[shops[i]].ToString();
+                }
+            }
+        }
+        shopRerollPriceText.text = shopRerollPrice.ToString();
+        prevShops = (int[])shops.Clone();      
+    }
+
+    void RevealHellCard()
+    {
+        hellBox.hellSprite.sprite = hellBox.hellSpriteBox[hellBox.upcomingHell];
+        hellBox.hellPriceText.text = "";
     }
     void ChangeCard(bool rerolling = false)
     {
         if(!rerolling) {
             shopRerollPrice = 10;
         }
-        shopRerollPriceText.text = shopRerollPrice.ToString();
         List<int> cardNow = new List<int>();
         
         int tempValue;
@@ -201,41 +246,34 @@ public class ShopManager : MonoBehaviour
         }
         //Debug.Log($"Pool of ChangeCard End : {cardNow[cardNow.Count-1]}");
 
-        for(int i=0; i<shops.Length; i++) {
-            tempValue = Random.Range(0,cardNow.Count);
+        for(int i=0; i < shops.Length; i++) {
+            tempValue = Random.Range(0, cardNow.Count);
             shops[i] = cardNow[tempValue];
-            if(shops[i]<16) {
+            if(shops[i] < 16) {
                 cardNow.RemoveAt(tempValue);
-                shopStands[i].sprite = EffectStand;
-                this.transform.Find("Body").Find("Shops").GetChild(i).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
             }
-            else if(shops[i]<100-cardBox.techStart) {
-                shopStands[i].sprite = InvenStand;
-                this.transform.Find("Body").Find("Shops").GetChild(i).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
-            }
-            else {
+            else if (shops[i] >= 100-cardBox.techStart) {
                 cardNow.RemoveAt(tempValue);
-                shopStands[i].sprite = TechStand;
-                this.transform.Find("Body").Find("Shops").GetChild(i).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
             }
-            shopImages[i].sprite = cardBox.transform.GetChild(shops[i]).GetComponent<SpriteRenderer>().sprite;
-            shopPriceTexts[i].text = cardBox.price[shops[i]].ToString();
+            // shopImages[i].sprite = cardBox.transform.GetChild(shops[i]).GetComponent<SpriteRenderer>().sprite;
+            // shopPriceTexts[i].text = cardBox.price[shops[i]].ToString();
         }
+        Arrange();
         // tempValue = Random.Range(0,cardNow.Count);
         // shop1 = cardNow[tempValue];
         // if(shop1<16) {
         //     cardNow.RemoveAt(tempValue);
         //     shop1Stand.sprite = EffectStand;
-        //     this.transform.GetChild(1).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        //     transform.GetChild(1).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
         // }
         // else if(shop1<100-cardBox.techStart) {
         //     shop1Stand.sprite = InvenStand;
-        //     this.transform.GetChild(1).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
+        //     transform.GetChild(1).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
         // }
         // else {
         //     cardNow.RemoveAt(tempValue);
         //     shop1Stand.sprite = TechStand;
-        //     this.transform.GetChild(1).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        //     transform.GetChild(1).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
         // }
         // shop1Image.sprite = cardBox.transform.GetChild(shop1).GetComponent<SpriteRenderer>().sprite;
 
@@ -245,16 +283,16 @@ public class ShopManager : MonoBehaviour
         // if(shop2<16) {
         //     cardNow.RemoveAt(tempValue);
         //     shop2Stand.sprite = EffectStand;
-        //     this.transform.GetChild(2).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        //     transform.GetChild(2).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
         // }
         // else if(shop2<100-cardBox.techStart) {
         //     shop2Stand.sprite = InvenStand;
-        //     this.transform.GetChild(2).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
+        //     transform.GetChild(2).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
         // }
         // else {
         //     cardNow.RemoveAt(tempValue);
         //     shop2Stand.sprite = TechStand;
-        //     this.transform.GetChild(2).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        //     transform.GetChild(2).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
         // }
         // shop2Image.sprite = cardBox.transform.GetChild(shop2).GetComponent<SpriteRenderer>().sprite;
         // tempValue = Random.Range(0,cardNow.Count);
@@ -262,16 +300,16 @@ public class ShopManager : MonoBehaviour
         // if(shop3<16) {
         //     cardNow.RemoveAt(tempValue);
         //     shop3Stand.sprite = EffectStand;
-        //     this.transform.GetChild(3).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        //     transform.GetChild(3).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
         // }
         // else if(shop3<100-cardBox.techStart) {
         //     shop3Stand.sprite = InvenStand;
-        //     this.transform.GetChild(3).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
+        //     transform.GetChild(3).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
         // }
         // else {
         //     cardNow.RemoveAt(tempValue);
         //     shop3Stand.sprite = TechStand;
-        //     this.transform.GetChild(3).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        //     transform.GetChild(3).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
         // }
         // shop3Image.sprite = cardBox.transform.GetChild(shop3).GetComponent<SpriteRenderer>().sprite;
         // tempValue = Random.Range(0,cardNow.Count);
@@ -279,16 +317,16 @@ public class ShopManager : MonoBehaviour
         // if(shop4<16) {
         //     cardNow.RemoveAt(tempValue);
         //     shop4Stand.sprite = EffectStand;
-        //     this.transform.GetChild(4).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        //     transform.GetChild(4).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
         // }
         // else if(shop4<100-cardBox.techStart) {
         //     shop4Stand.sprite = InvenStand;
-        //     this.transform.GetChild(4).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
+        //     transform.GetChild(4).GetChild(0).GetChild(0).localPosition = new Vector3(0,0.24f,0);
         // }
         // else {
         //     cardNow.RemoveAt(tempValue);
         //     shop4Stand.sprite = TechStand;
-        //     this.transform.GetChild(4).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
+        //     transform.GetChild(4).GetChild(0).GetChild(0).localPosition = new Vector3(0,0,0);
         // }
         // shop4Image.sprite = cardBox.transform.GetChild(shop4).GetComponent<SpriteRenderer>().sprite;
 
@@ -330,7 +368,7 @@ public class ShopManager : MonoBehaviour
     }
     public void shopExtend()
     {
-        this.transform.Find("Body").Find("Shops").GetChild(3).gameObject.SetActive(true);
+        transform.Find("Body").Find("Shops").GetChild(3).gameObject.SetActive(true);
         int cnt = 0;
         for(float y = 1.9f; y>=-2f; y-=3.41f)
         {
@@ -338,11 +376,11 @@ public class ShopManager : MonoBehaviour
             for(float x = -2.14f; x<=6f; x+=5.23f)
             {
                 //Debug.Log($"shop{cnt}Expanding : {x} {y}");
-                //this.transform.GetChild(cnt).GetChild(0).localPosition = new Vector3(x,y,0f);
-                this.transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(1).localPosition = new Vector3(x+2.84f,y+0.4f,0f);
-                this.transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(2).localPosition = new Vector3(x+2.64f,y-1.1f,0f);
-                this.transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(0).localPosition = new Vector3(x,y-0.24f,0f);
-                this.transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(3).localPosition = new Vector3(x+2.64f,y+0.4f,0f);
+                //transform.GetChild(cnt).GetChild(0).localPosition = new Vector3(x,y,0f);
+                transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(1).localPosition = new Vector3(x+2.84f,y+0.4f,0f);
+                transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(2).localPosition = new Vector3(x+2.64f,y-1.1f,0f);
+                transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(0).localPosition = new Vector3(x,y-0.24f,0f);
+                transform.Find("Body").Find("Shops").GetChild(cnt).GetChild(3).localPosition = new Vector3(x+2.64f,y+0.4f,0f);
                 cnt++;
             }
         }
