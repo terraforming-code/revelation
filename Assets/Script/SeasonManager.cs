@@ -2,28 +2,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SeasonManager : MonoBehaviour
+public class SeasonManager: SavableObject
 {
     public GameObject effectManager, NightFilter, Resource, auroraObj;
     SpriteRenderer NightFilterSprite, AuroraSprite;
     Saram saram;
     EffectManager effectBox;
+    private float nightX;
+
+    /********** Save Data *********/
     public float gamespeed = 16f;
     public float season = 0f;
     public float seasonstop = -1f;
     public bool nightTrigger = true;
-    float nightX;
-    
-    // Start is called before the first frame update
-    void Start()
+
+    /* Transform.position */
+
+    /*******************************/
+    public override void Load() {
+        SeasonSaveData data = SaveManager.Instance.LoadData.Season;
+        Debug.Log($"Resource: Load: data={data}");
+        gamespeed = data.gamespeed;
+        season = data.season;
+        seasonstop = data.seasonstop;
+        nightTrigger = data.nightTrigger;
+        transform.position = data.pivotPosition;
+
+        /* Set Initial Position of Season Pivot */
+        /* @TODO */
+    }
+    public override void Save() {
+        SeasonSaveData data = new SeasonSaveData(
+            gamespeed,
+            season,
+            seasonstop,
+            nightTrigger,
+            transform.position
+        );
+        SaveManager.Instance.SaveData.Season = data;
+    }
+    void Awake()
     {
         NightFilterSprite = NightFilter.GetComponent<SpriteRenderer>();
         AuroraSprite = auroraObj.GetComponent<SpriteRenderer>();
         effectBox = effectManager.GetComponent<EffectManager>();
         saram = Resource.GetComponent<Saram>();
     }
-
-    // Update is called once per frame
     void Update()
     {
         if(seasonstop >= 0f) {
@@ -32,8 +56,8 @@ public class SeasonManager : MonoBehaviour
         }
         else {
             season += Time.deltaTime/gamespeed*4;
-            this.transform.position += new Vector3(Time.deltaTime/gamespeed*7,0,0);
-            this.transform.Rotate(0,0,-Time.deltaTime/gamespeed*360);
+            transform.position += new Vector3(Time.deltaTime/gamespeed*7,0,0);
+            transform.Rotate(0,0,-Time.deltaTime/gamespeed*360);
             if(season-Mathf.Floor(season) < 2f/3f && !nightTrigger)
             {
                 nightTrigger = true;
@@ -60,7 +84,7 @@ public class SeasonManager : MonoBehaviour
             }
             if(season>4) {
                 season = 0f;
-                this.transform.position = new Vector3(-3.5f,this.transform.position.y,0);
+                transform.position = new Vector3(-3.5f,transform.position.y,0);
             }
         }
     }

@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class MammothManager : MonoBehaviour
+public class MammothManager : SavableObject
 {
-    public float mammothPower = 10;
-    float mammothFood = 120f;
-    public int HuntDate = -1;
     public GameObject Resource, citizenManager, EnemyManager, hellManager;
     HellManager hellBox;
     Resource resource;
@@ -19,9 +16,37 @@ public class MammothManager : MonoBehaviour
     GameObject HuntDateObj;
     TextMeshPro mammothPowerText, mammothFoodText;
 
+
+    /********** Save Data *********/
+    public int HuntDate = -1;
     public int huntedExperience = 0;
-    // Start is called before the first frame update
-    void Start()
+    public float mammothPower = 10;
+    public float mammothFood = 120f;
+    /*******************************/
+    public override void CreateNew()
+    {
+        MammothNew();        
+    }
+    public override void Load() {
+        MammothSaveData data = SaveManager.Instance.LoadData.Mammoth;
+
+        HuntDate = data.HuntDate;
+        huntedExperience = data.huntedExperience;
+        mammothPower = data.mammothPower;
+        mammothFood = data.mammothFood;
+        
+        /* Arrange Mammoths */
+        MammothObjRearrange();        
+    }
+    public override void Save() {
+        SaveManager.Instance.SaveData.Mammoth = new MammothSaveData(
+            HuntDate,
+            huntedExperience,
+            mammothPower,
+            mammothFood
+        );
+    }
+    void Awake()
     {
         hellBox = hellManager.GetComponent<HellManager>();
         resource = Resource.GetComponent<Resource>();
@@ -31,12 +56,8 @@ public class MammothManager : MonoBehaviour
 
         mammothPowerText = this.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>();
         mammothFoodText = this.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
-
-        mammothNew();
-
-        
     }
-    public void mammothNew()
+    public void MammothNew()
     {
         mammothPower = 10f;
         mammothFood = 120f;
@@ -45,7 +66,7 @@ public class MammothManager : MonoBehaviour
             mammothPower *= 1.2f;
             mammothFood *= 1.2f;
         }
-        mammothObjRearrange();
+        MammothObjRearrange();
     }
     public void GoHunt(bool Attacked)
     {
@@ -58,7 +79,7 @@ public class MammothManager : MonoBehaviour
             resource.happy = Mathf.Min(resource.happy+0.1f,1.2f);
             resource.food += mammothFood;
             huntedExperience++;
-            mammothNew();
+            MammothNew();
         }
         else
         {
@@ -72,10 +93,10 @@ public class MammothManager : MonoBehaviour
             mammothPower -= realPower;
         }
         hellBox.bigLose = false;
-        citizenBox.citizenRearrange();
+        citizenBox.Arrange();
 
     }
-    public void mammothObjRearrange()
+    public void MammothObjRearrange()
     {
         if(HuntDateObj != null) {Destroy(HuntDateObj); HuntDateObj=null;}
         if(HuntDate != -1)

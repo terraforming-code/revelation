@@ -87,6 +87,7 @@ public class MenuWindow : Window
     // }
     public override void Close()
     {
+        base.Close();
         Resume();
     }
     /* Pages */

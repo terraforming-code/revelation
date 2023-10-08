@@ -65,7 +65,7 @@ public class CardBox : MonoBehaviour
         }
         if(i == 16)
         {
-            citizenBox.citizenAdd();
+            citizenBox.AddCitizen();
         }
         if(i == 17)
         {

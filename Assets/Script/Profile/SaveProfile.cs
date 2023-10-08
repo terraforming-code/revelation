@@ -1,41 +1,199 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
 [System.Serializable]
-public sealed class SaveProfile<T> where T: SaveProfileData
+public sealed class SaveProfile
 {
     public string name;
-    public T saveData;
+    
+    public DateTime timestamp;
+    public GameSaveData data;
 
     private SaveProfile()
     {
         
     }
-
-    public SaveProfile(string name, T saveData)
+    public SaveProfile(string name)
     {
         this.name = name;
-        this.saveData = saveData;
+        this.timestamp = DateTime.Now;
+        this.data = new GameSaveData{};
     }
 }
 
-public abstract record SaveProfileData {};
-
-
-public record GameSaveData: SaveProfileData {
-    private ResourceSaveData resourceSaveData;
+public record GameSaveData {
+    public ResourceSaveData Resource;
+    public SeasonSaveData Season;
+    public SaramSaveData Saram;
+    public TechSaveData Tech;
+    public EffectSaveData Effect;
+    public InvenSaveData Inven;
+    public ShopSaveData Shop;
+    public EnemySaveData Enemy;
+    public MammothSaveData Mammoth;
 }
-public record ResourceSaveData
+public abstract record SaveData {};
+public record ResourceSaveData: SaveData
 {
-    private int money;
-    private float food, power, love, grain, defense, farmTech, fightTech;
-    private float happy;
-    private float moretax;
-    private int seasonEat;
-    private float foodLimit;
-    private bool waitNewSeason; 
-    private bool poongzak;
-    private float happyBeforeHell;  
+    public int money, seasonEat;
+    public float food, power, love, grain, defense, farmTech, fightTech, happy, moretax, foodLimit, happyBeforeHell;
+    public bool waitNewSeason, poongzak; 
+
+    public ResourceSaveData(
+        int money,
+        int seasonEat,
+        float food, 
+        float power, 
+        float love, 
+        float grain, 
+        float defense, 
+        float farmTech, 
+        float fightTech, 
+        float happy,
+        float moretax,
+        float foodLimit,
+        float happyBeforeHell,
+        bool waitNewSeason,    
+        bool poongzak
+    ){
+        this.money = money;
+        this.food = food; 
+        this.power = power; 
+        this.love = love; 
+        this.grain = grain; 
+        this.defense = defense; 
+        this.farmTech = farmTech; 
+        this.fightTech = fightTech;
+        this.happy = happy;
+        this.moretax = moretax;
+        this.seasonEat = seasonEat;
+        this.foodLimit = foodLimit;
+        this.waitNewSeason = waitNewSeason;    
+        this.poongzak = poongzak;
+        this.happyBeforeHell = happyBeforeHell;
+    }
+} 
+public record SeasonSaveData: SaveData
+{
+    public float gamespeed;
+    public float season;
+    public float seasonstop;
+    public bool nightTrigger;    
+    public Vector3 pivotPosition;
+    public SeasonSaveData(float gamespeed, float season, float seasonstop, bool nightTrigger, Vector3 pivotPosition)
+    {
+        this.gamespeed = gamespeed;
+        this.season = season;
+        this.seasonstop = seasonstop;
+        this.nightTrigger = nightTrigger;
+        this.pivotPosition = pivotPosition;
+    }
+}
+public record SaramSaveData: SaveData
+{
+    public int[] num;
+    public List<List<string>> nickname;
+    public List<List<float>> holy;
+    public List<List<float>> farming;
+    public List<List<float>> eating;
+    public List<List<float>> fighting;
+    public List<List<float>> love;
+    public List<List<float>> life;
+
+    public List<List<int>> char1; 
+    public List<List<int>> char2;
+    public List<List<int>> char3;
+
+    public SaramSaveData(int[] num, List<List<string>> nickname, List<List<float>> holy, List<List<float>> farming, List<List<float>> eating, List<List<float>> fighting, List<List<float>> love, List<List<float>> life, List<List<int>> char1, List<List<int>> char2, List<List<int>> char3)
+    {
+        this.num = num;
+        this.nickname = nickname;
+        this.holy = holy;
+        this.farming = farming;
+        this.eating = eating;
+        this.fighting = fighting;
+        this.love = love;
+        this.life = life;
+        this.char1 = char1; 
+        this.char2 = char2;
+        this.char3 = char3;
+    }
+}
+public record ShopSaveData: SaveData
+{
+    public int shopRerollPrice;
+    public bool isHellRevealed;
+    public int[] shops;
+    public bool waitspring;
+    public ShopSaveData(int shopRerollPrice, bool isHellRevealed, int[] shops, bool waitspring)
+    {
+        this.shopRerollPrice = shopRerollPrice;
+        this.isHellRevealed = isHellRevealed;
+        this.shops = shops;
+        this.waitspring = waitspring;
+    }
+}
+public record InvenSaveData: SaveData
+{
+    public List<int> invenNumBox;
+    public int invenSelect;
+    public InvenSaveData(List<int> invenNumBox, int invenSelect)
+    {
+        this.invenNumBox = invenNumBox;
+        this.invenSelect = invenSelect;
+    }
+}
+public record TechSaveData: SaveData
+{
+    public int[] enable;    
+    public int ironAgeComing;
+    public bool ironAgeStart;
+    public bool ironAge;
+    public TechSaveData(int[] enable, int ironAgeComing, bool ironAgeStart, bool ironAge)
+    {
+        this.enable = enable;
+        this.ironAgeComing = ironAgeComing; 
+        this.ironAgeStart = ironAgeStart; 
+        this.ironAge = ironAge; 
+    }
+}
+public record EffectSaveData: SaveData
+{
+    public int[] enable;    
+    public EffectSaveData(int[] enable)
+    {
+        this.enable = enable;
+    }
+}
+public record EnemySaveData: SaveData
+{
+    public int enemyLife;
+    public int fightDate;    
+    public int fightCounter;
+    public float newenemyPower; 
+    public float enemyPower;
+    public EnemySaveData(int enemyLife, int fightDate, int fightCounter, float newenemyPower, float enemyPower){
+        this.enemyLife = enemyLife;
+        this.fightDate = fightDate;    
+        this.fightCounter = fightCounter;
+        this.newenemyPower = newenemyPower; 
+        this.enemyPower = enemyPower;   
+    }
+}
+public record MammothSaveData: SaveData
+{
+    public int HuntDate;
+    public int huntedExperience;
+    public float mammothPower;
+    public float mammothFood;
+    public MammothSaveData(int HuntDate, int huntedExperience, float mammothPower, float mammothFood)
+    {
+        this.HuntDate = HuntDate;
+        this.huntedExperience = huntedExperience;
+        this.mammothPower = mammothPower;
+        this.mammothFood = mammothFood;
+    }
 }

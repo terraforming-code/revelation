@@ -2,35 +2,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EffectManager : MonoBehaviour
+public class EffectManager: SavableObject
 {
-
-
     public GameObject CardBox;
     public Sprite LockedSprite, UnlockedSprite;
     CardBox cardBox;
     
-    public int[] enable = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     public GameObject[] effectObjBox = new GameObject[]{null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null};
     SpriteRenderer[] effectStand = new SpriteRenderer[]{null,null,null,null,null,null,null,null};
-
-
     public int currentPage = 0; // 0 or 8
-    // Start is called before the first frame update
+
+    /********** Save Data *********/
+    public int[] enable = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    /*******************************/
+    public override void Load() {
+        EffectSaveData data = SaveManager.Instance.LoadData.Effect;
+        enable = data.enable;
+
+        /* Enable 값에 따라 오브젝트 초기화 */
+        for (int index = 0; index < enable.Length; index++)
+        {
+            if(enable[index] == 1)
+            {
+                objEnable(index);
+            }
+        }
+    }
+    public override void Save() {
+        SaveManager.Instance.SaveData.Effect = new EffectSaveData(
+            enable
+        );
+    }
     void Start()
-    {
-        
+    {        
         cardBox = CardBox.GetComponent<CardBox>();
         for(int i = 0; i < 8; i++)
-            effectStand[i] = this.transform.GetChild(i).gameObject.GetComponent<SpriteRenderer>();
-        
+            effectStand[i] = this.transform.GetChild(i).gameObject.GetComponent<SpriteRenderer>();        
     }
     public void objEnable(int num)
     {
         effectObjBox[num] = Instantiate(CardBox.transform.GetChild(num).gameObject);
         effectObjBox[num].transform.SetParent(this.transform);
         effectObjBox[num].transform.position = this.transform.GetChild(num%8).position;
-        if(num/8 != currentPage/8) effectObjBox[num].SetActive(false);
+        if(num/8 != currentPage/8) 
+        {
+            effectObjBox[num].SetActive(false);
+        }
         enable[num] = 1;
         cardBox.skill(num);
     }

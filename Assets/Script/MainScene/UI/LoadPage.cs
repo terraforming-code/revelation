@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class LoadPage : MonoBehaviour
 {
-    public GameObject profileButton;
-    private List<GameObject> profileButtonList = new List<GameObject>();
+    public GameObject profileGroup;
+    private List<GameObject> profileGroupList = new List<GameObject>();
     void Awake()
     {
         // gameObject.SetActive(false);
@@ -25,18 +25,23 @@ public class LoadPage : MonoBehaviour
         // gameObject.SetActive(true);
         // PoolProfiles();
     }
-    private void PoolProfiles()
+    public void PoolProfiles()
     {
+        /* Remove All ProfileGroups */
+        foreach (Transform child in transform.GetChild(1)) {
+            GameObject.Destroy(child.gameObject);
+        }
         GameObject tmp;
         var files = SaveManager.GetFiles();
-        Debug.Log("LoadPage: List of Files");
+
+        /* Pool ProfileGroups */
         foreach (var file in files)
         {
             Debug.Log("{0}" + Path.GetFileName(file));
-            tmp = Instantiate(profileButton);
-            tmp.transform.SetParent(transform.GetChild(1)); /* LoadPage - Body - {ProfileButton}의 게층으로 설정. */
-            tmp.GetComponent<ProfileButton>().Set(Path.GetFileName(file));
-            profileButtonList.Add(tmp);
+            tmp = Instantiate(profileGroup);
+            tmp.transform.SetParent(transform.GetChild(1)); /* LoadPage - Body - {ProfileButton}의 계층으로 설정. */
+            tmp.GetComponent<ProfileGroup>().Set(Path.GetFileName(file));
+            profileGroupList.Add(tmp);
         }
     } 
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,19 +6,20 @@ using TMPro;
 
 public class SavePage : MonoBehaviour
 {
-    private string profileName = "testProfile"; /* 저장할 프로필 이름 */
-    private TextMeshPro saveStateText; /* Save 페이지에 표시되는 텍스트 */
+    private string profileName; /* 저장할 프로필 이름 */
+    private TextMeshProUGUI saveStateText; /* Save 페이지에 표시되는 텍스트 */
     private string saveResult;
     
 
     void Awake()
     {
         // menuManager = GameObject.Find("MenuWindow").gameObject.GetComponent<MenuManager>;
-        saveStateText = transform.GetChild(1).GetChild(0).GetComponent<TextMeshPro>();
+        saveStateText = transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
     }
     void Start()
     {
         Debug.Log("SavePage: Start");        
+        profileName = $"testProfile_{DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss")}";
         saveResult = SaveManager.SaveGame(profileName); /* Save Game */      
         switch(saveResult) {
             case "success":

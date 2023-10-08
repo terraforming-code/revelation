@@ -427,7 +427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc56286347ee2d545bde7210b7128301, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  profileButton: {fileID: 6652813280768222900, guid: 1893fd3c14a93bf4dabdf3eb06481756, type: 3}
+  profileGroup: {fileID: 3898909546583429237, guid: 823fe2d5797a8374ba0549590d10e22f, type: 3}
 --- !u!224 &209143124 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 312465361063649410, guid: bc93dcbdf9b51ae408570a9e1dd75f80, type: 3}

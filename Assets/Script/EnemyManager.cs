@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class EnemyManager : MonoBehaviour
+public class EnemyManager : SavableObject
 {
-    public int enemyLife = 2;
-    float newenemyPower = 1f, enemyPower = 2f;
-    public int fightDate = -1;
     public GameObject Resource, citizenManager;
     Resource resource;
     Saram saram;
@@ -18,9 +15,32 @@ public class EnemyManager : MonoBehaviour
     GameObject fightDateObj;
     TextMeshPro enemyLifeText, enemyPowerText;
 
+    /********** Save Data *********/
+    public int enemyLife = 2;
+    public int fightDate = -1;    
     public int fightCounter = 0;
-    // Start is called before the first frame update
-    void Start()
+    public float newenemyPower = 1f; 
+    public float enemyPower = 2f;
+    /*******************************/
+    public override void Load() {
+        EnemySaveData data = SaveManager.Instance.LoadData.Enemy;
+
+        enemyLife = data.enemyLife;
+        fightDate = data.fightDate;    
+        fightCounter = data.fightCounter;
+        newenemyPower = data.newenemyPower; 
+        enemyPower = data.enemyPower;      
+    }
+    public override void Save() {
+        SaveManager.Instance.SaveData.Enemy = new EnemySaveData(
+            enemyLife,
+            fightDate,    
+            fightCounter,
+            newenemyPower, 
+            enemyPower   
+        );
+    }
+    void Awake()
     {
         hellBox = hellManager.GetComponent<HellManager>();
         resource = Resource.GetComponent<Resource>();
@@ -28,9 +48,7 @@ public class EnemyManager : MonoBehaviour
         citizenBox = citizenManager.GetComponent<CitizenManager>();
 
         enemyLifeText = this.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>();
-        enemyPowerText = this.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
-
-        
+        enemyPowerText = this.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();        
     }
     public void enemyGrow()
     {
@@ -39,6 +57,7 @@ public class EnemyManager : MonoBehaviour
         enemyPower += newLife * newenemyPower;
         newenemyPower += 0.1f;
     }
+
     public void GoWar(bool Attacked)
     {
         float realPower = (saram.num[0]==1? 1.0f : 0.8f) * resource.power;
@@ -87,10 +106,8 @@ public class EnemyManager : MonoBehaviour
                 enemyPower -= enemyPowerPerMan;
                 cha --;
             }  
-        }
-        
-        citizenBox.citizenRearrange();
-
+        }        
+        citizenBox.Arrange();
     }
     public void enemyObjRearrange()
     {

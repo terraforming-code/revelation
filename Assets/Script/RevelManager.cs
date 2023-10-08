@@ -80,7 +80,7 @@ public class RevelManager : MonoBehaviour
         //                 }
 
         //                 invenBox.invenNumBox.RemoveAt(pivot);
-        //                 invenBox.invenRearrange();
+        //                 invenBox.rearrange();
         //                 reveling = false;
         //                 if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
         //                 this.gameObject.SetActive(false);
@@ -119,7 +119,7 @@ public class RevelManager : MonoBehaviour
             }
 
             invenBox.invenNumBox.RemoveAt(pivot);
-            invenBox.invenRearrange();
+            invenBox.rearrange();
             reveling = false;
             if(effectBox.enable[3] == 1) MegaphoneButton.SetActive(true);
             this.gameObject.SetActive(false);

@@ -46,6 +46,7 @@ public abstract class Window : MonoBehaviour
     }
     public virtual void Close()
     {
+        Debug.Log($"Window: Close");
         /* CurrentPage 초기화 */
         CurrentPage.SetActive(false);
         CurrentPage = null;
