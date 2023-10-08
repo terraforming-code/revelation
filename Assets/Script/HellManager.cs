@@ -106,8 +106,7 @@ public class HellManager : MonoBehaviour
 
         }
         else {
-            hellEventCounter += Time.deltaTime;
-            if(eventTriggerOn && hellEventCounter >= 1f) {
+            if(eventTriggerOn && HellEventEndCondition()) {
                 eventTriggerOn = false;
                 hellEventBox.HellEventEnd();
             }
@@ -118,7 +117,6 @@ public class HellManager : MonoBehaviour
     {
         if(!eventTriggerOn && upcomingHell != -1) {
             eventTriggerOn = true;
-            hellEventCounter = 0f;
             hellEventBox.HellEventStart(upcomingHell);
         }
         switch(upcomingHell)
@@ -133,7 +131,7 @@ public class HellManager : MonoBehaviour
                 if(buildBox.build[1]==1f) {buildBox.DestroyBuilding(-1); return true;}
                 else {buildBox.DestroyBuilding(-1); return false;}
             case 3 :
-                return false;
+                return false; // need artificial rain trigger
             case 4 :
                 if(buildBox.build[2]==1f || techBox.enable[7]==1) return true;
                 else {resource.happy = Mathf.Max(0.8f,resource.happy-0.1f); return false;}
@@ -178,6 +176,46 @@ public class HellManager : MonoBehaviour
                 return false;
             case 13 :
                 return true;
+
+
+        }
+        return true;
+    }
+    public bool HellEventEndCondition()
+    {
+        if(seasonBox.hellEventEndTrigger) {
+            return true;
+        }
+        switch(upcomingHell)
+        {
+            case 0 :
+                return false;
+            case 1 :
+                return false;
+            case 2 :
+                return false;
+            case 3 :
+                return false; // need artificial rain trigger
+            case 4 :
+                return false; // need artificial sun trigger
+            case 5 :
+                return false;
+            case 6 :
+                return false; // need artificial sun trigger
+            case 7 :
+                return false; // need artificial rain trigger
+            case 8 :
+                return false;
+            case 9 :
+                return false;
+            case 10 :
+                return false;
+            case 11 :
+                return false;
+            case 12 :
+                return false;
+            case 13 :
+                return false;
 
 
         }

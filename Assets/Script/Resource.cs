@@ -222,6 +222,7 @@ public class Resource : MonoBehaviour
             //hell process + Rainbow
             if(seasonEat % 12 == 3 || seasonEat % 12 == 9 )
             {
+                seasonBox.hellEventEndTrigger = false;
                 hellBox.guardHell = hellBox.HellGuardCondition();
             }
             else if(seasonEat % 12 == 5 || seasonEat % 12 == 11 )

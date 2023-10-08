@@ -8,7 +8,7 @@ public class Raindrop : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        this.transform.localPosition = new Vector3(Random.Range(-16f,16f),Random.Range(0f,60f * dropSpeed)+10f,0);
+        this.transform.localPosition = new Vector3(Random.Range(-24f,24f),Random.Range(0f,60f * dropSpeed)+10f,0);
     }
 
     // Update is called once per frame

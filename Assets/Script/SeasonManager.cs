@@ -11,7 +11,7 @@ public class SeasonManager : MonoBehaviour
     public float gamespeed = 16f;
     public float season = 0f;
     public float seasonstop = -1f;
-    public bool nightTrigger = true;
+    public bool nightTrigger = true, hellEventEndTrigger = true;
     float nightX;
     
     // Start is called before the first frame update
@@ -63,5 +63,7 @@ public class SeasonManager : MonoBehaviour
                 this.transform.position = new Vector3(-3.5f,this.transform.position.y,0);
             }
         }
+
+        if((season >= 1.5f && season < 1.9f) || (season >= 3.5f && season < 3.9f)) hellEventEndTrigger = true;
     }
 }
